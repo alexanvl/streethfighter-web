@@ -9,6 +9,8 @@ firebase.initializeApp({
   projectId: "ethba-hackathon",
 });
 
+export default firebase;
+
 export function getUser() {
   if (!authCallback) {
     return new Promise((resolve, reject) => {

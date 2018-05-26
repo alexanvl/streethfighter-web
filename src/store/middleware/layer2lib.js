@@ -1,6 +1,6 @@
 import * as Layer2lib from 'js-layer2lib';
 import bindActions, { actionTypes } from '../actions';
-import * as firebase from './firebase/api';
+import firebase from './firebase/api';
 
 const Web3 = require('web3');
 const web3 = new Web3();
@@ -22,6 +22,7 @@ export default ({ dispatch, getState }) => {
 
           layer2lib = new Layer2lib("http://localhost:8545", options);
         }
+        return layer2lib;
       }
       default:
         return next(action);
