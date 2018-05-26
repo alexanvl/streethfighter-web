@@ -3,12 +3,10 @@ import * as firebase from 'firebase';
 let authCallback = null;
 
 firebase.initializeApp({
-  apiKey: "AIzaSyBfgGflSXVa6zoAc8z25xRhTXD2UhKbziE",
-  authDomain: "wt-trading.firebaseapp.com",
-  databaseURL: "https://wt-trading.firebaseio.com",
-  projectId: "wt-trading",
-  storageBucket: "wt-trading.appspot.com",
-  messagingSenderId: "152013506681"
+  apiKey: "AIzaSyCiDdsgg0bGEG4dUqJLgaF2R7VCJJH0NaI",
+  authDomain: "ethba-hackathon.firebaseapp.com",
+  databaseURL: "https://ethba-hackathon.firebaseio.com",
+  projectId: "ethba-hackathon",
 });
 
 export function getUser() {
