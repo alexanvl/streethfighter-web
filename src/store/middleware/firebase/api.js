@@ -42,15 +42,7 @@ export function signOut() {
 }
 
 export function listenOn(ref, handler) {
-  const handleSnapshot = (ss) => {
-    if (ss.val()) {
-      handler(ss.val());
-    }
-  };
-
-  return firebase.database().ref(ref)
-    .then(() => firebase.database().ref(ref).on('value', handleSnapshot))
-    .then(() => handleSnapshot);
+  return firebase.database().ref(ref).on('value', ss => handler(ss.val()))
 }
 
 export function listenOff(ref, listener) {
