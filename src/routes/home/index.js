@@ -5,9 +5,14 @@ import meta from './meta';
 import styles from './styles';
 
 export default injectRedux(props => {
-  const { classes, firebaseActions, history, location } = props;
-  const about = [];
-  //firebaseActions.listenOn('test', console.log)
+  const {
+    classes,
+    firebaseActions,
+    layer2libActions,
+    history,
+    location
+  } = props;
+
   return (
     <div>
       Hello World

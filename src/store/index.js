@@ -2,7 +2,7 @@ import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
 import {
-  firebaseMiddleware,
+  firebaseMiddleware, layer2libMiddleware
 } from './middleware';
 
 export { rootReducer };
@@ -13,6 +13,7 @@ export default (initialState) => {
     applyMiddleware(
       thunk,
       firebaseMiddleware,
+      layer2libMiddleware,
     )
   );
 };

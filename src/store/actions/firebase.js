@@ -31,5 +31,4 @@ export function listenOff(key, cb) {
   return { type: actions.LISTEN_OFF, key, cb };
 }
 
-
 export default actions;
