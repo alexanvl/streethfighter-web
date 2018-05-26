@@ -9,7 +9,9 @@
     "deploy": "npm run build && firebase deploy",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "migrate": "truffle migrate --reset --verbose"
+    "migrate": "truffle migrate --reset --verbose",
+    "update-lib": "rm -rf node_modules/js-layer2lib; npm install",
+    "update-liby": "rm -rf node_modules/js-layer2lib; yarn"
   },
   "repository": {
     "type": "git",
