@@ -3,8 +3,8 @@ const actions = {
   LOGIN_EMAIL: 'LOGIN_EMAIL',
   SIGNUP_EMAIL: 'SIGNUP_EMAIL',
   SIGN_OUT: 'SIGN_OUT',
-  LISTEN_MODEL_ON: 'LISTEN_MODEL_ON',
-  LISTEN_MODEL_OFF: 'LISTEN_MODEL_OFF'
+  LISTEN_ON: 'LISTEN_ON',
+  LISTEN_OFF: 'LISTEN_OFF'
 };
 
 export function getUser() {
@@ -24,11 +24,11 @@ export function logOut() {
 }
 
 export function listenOn(key, cb) {
-  return { type: actions.LISTEN_MODEL_ON, key, cb };
+  return { type: actions.LISTEN_ON, key, cb };
 }
 
 export function listenModelOff(key, cb) {
-  return { type: actions.LISTEN_MODEL_OFF, key, cb };
+  return { type: actions.LISTEN_OFF, key, cb };
 }
 
 

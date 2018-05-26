@@ -23,13 +23,13 @@ export default ({ dispatch, getState }) => {
       case actionTypes.firebase.SIGN_OUT: {
         return Api.signOut();
       }
-      case actionTypes.firebase.LISTEN_MODEL_ON: {
+      case actionTypes.firebase.LISTEN_ON: {
         return Api.listenOn(
           action.key,
           action.cb
         );
       }
-      case actionTypes.firebase.LISTEN_MODEL_OFF: {
+      case actionTypes.firebase.LISTEN_OFF: {
         return Api.listenOff(
           action.key,
           action.cb
