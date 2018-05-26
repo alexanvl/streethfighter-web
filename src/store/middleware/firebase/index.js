@@ -35,6 +35,9 @@ export default ({ dispatch, getState }) => {
           action.cb
         );
       }
+      case actionTypes.firebase.SET: {
+        return Api.set(action.key, action.data);
+      }
       default:
         return next(action);
     }

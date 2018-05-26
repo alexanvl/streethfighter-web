@@ -4,7 +4,8 @@ const actions = {
   SIGNUP_EMAIL: 'SIGNUP_EMAIL',
   SIGN_OUT: 'SIGN_OUT',
   LISTEN_ON: 'LISTEN_ON',
-  LISTEN_OFF: 'LISTEN_OFF'
+  LISTEN_OFF: 'LISTEN_OFF',
+  SET: 'SET',
 };
 
 export function getUser() {
@@ -29,6 +30,10 @@ export function listenOn(key, cb) {
 
 export function listenOff(key, cb) {
   return { type: actions.LISTEN_OFF, key, cb };
+}
+
+export function set(key, data) {
+  return { type: actions.SET, key, data };
 }
 
 export default actions;
