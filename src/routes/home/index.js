@@ -5,6 +5,7 @@ import bgImage from './images/background.jpg';
 import meta from './meta';
 import styles from './styles';
 
+<<<<<<< HEAD
 class Home extends Component {
   constructor() {
     super();
@@ -33,3 +34,20 @@ class Home extends Component {
 
 export default injectRedux(Home);
 
+=======
+export default injectRedux(props => {
+  const {
+    classes,
+    firebaseActions,
+    layer2libActions,
+    history,
+    location
+  } = props;
+
+  return (
+    <div>
+      Hello World
+    </div>
+  );
+});
+>>>>>>> 375de343b90c6602bc3ba03150820435f9207ca1
