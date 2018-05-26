@@ -23,12 +23,12 @@ export function logOut() {
   return { type: actions.SIGN_OUT };
 }
 
-export function listenModelOn(modelId) {
-  return { type: actions.LISTEN_MODEL_ON, modelId };
+export function listenOn(key, cb) {
+  return { type: actions.LISTEN_MODEL_ON, key, cb };
 }
 
-export function listenModelOff(modelId, listener) {
-  return { type: actions.LISTEN_MODEL_OFF, modelId, listener };
+export function listenModelOff(key, cb) {
+  return { type: actions.LISTEN_MODEL_OFF, key, cb };
 }
 
 

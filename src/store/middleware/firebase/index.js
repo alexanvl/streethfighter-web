@@ -25,14 +25,14 @@ export default ({ dispatch, getState }) => {
       }
       case actionTypes.firebase.LISTEN_MODEL_ON: {
         return Api.listenOn(
-          `model_id/${action.modelId}/module_id`,
-          actions.watchtowerActions.handleModel
+          action.key,
+          action.cb
         );
       }
       case actionTypes.firebase.LISTEN_MODEL_OFF: {
         return Api.listenOff(
-          `model_id/${action.modelId}/module_id`,
-          action.listener
+          action.key,
+          action.cb
         );
       }
       default:
