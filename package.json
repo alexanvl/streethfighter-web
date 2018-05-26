@@ -23,10 +23,12 @@
   "dependencies": {
     "firebase": "^5.0.4",
     "js-layer2lib": "github:layer2lib/js-layer2lib#firebase",
+    "lodash": "^4.17.10",
     "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",
+    "react-responsive-spritesheet": "^2.3.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "^1.1.4",
@@ -34,7 +36,6 @@
     "redux-thunk": "^2.2.0",
     "truffle": "^4.1.11",
     "truffle-hdwallet-provider": "^0.0.5",
-    "react-responsive-spritesheet": "^2.3.6",
     "web3": "^0.20.4"
   }
 }

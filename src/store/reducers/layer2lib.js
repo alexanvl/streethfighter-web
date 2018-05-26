@@ -8,7 +8,7 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case actions.INIT:
-      const newState = { a: 1 };
+      const newState = state;
       return newState;
     default:
       return state;

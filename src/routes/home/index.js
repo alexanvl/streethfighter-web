@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Spritesheet from 'react-responsive-spritesheet';
 import Layer2LibTester from './components/Layer2LibTester';
+import Lobby from './components/Lobby';
 import { injectRedux } from '../../components';
 import bgImage from './images/background.jpg';
 import meta from './meta';
@@ -25,7 +26,10 @@ class Home extends Component {
         //   autoplay={true}
         //   loop={true}
         // />
-        <Layer2LibTester />
+        <div>
+          <Layer2LibTester />
+          <Lobby />
+        </div>
     );
   }
 }
