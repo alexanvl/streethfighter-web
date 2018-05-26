@@ -22,6 +22,7 @@
   "homepage": "https://bitbucket.org/wttrading/web#readme",
   "dependencies": {
     "firebase": "^5.0.4",
+    "js-layer2lib": "github:layer2lib/js-layer2lib#firebase",
     "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
@@ -31,8 +32,8 @@
     "react-scripts": "^1.1.4",
     "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
-    "js-layer2lib": "github:layer2lib/js-layer2lib#firebase",
     "truffle": "^4.1.11",
-    "truffle-hdwallet-provider": "^0.0.5"
+    "truffle-hdwallet-provider": "^0.0.5",
+    "web3": "^1.0.0-beta.34"
   }
 }

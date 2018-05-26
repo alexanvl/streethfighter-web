@@ -2,6 +2,9 @@ import * as Layer2lib from 'js-layer2lib';
 import bindActions, { actionTypes } from '../actions';
 import * as firebase from './firebase/api';
 
+const Web3 = require('web3');
+const web3 = new Web3();
+
 const firebaseProxy = new Layer2lib.FirebaseStorageProxy(firebase);
 let layer2lib = null
 
