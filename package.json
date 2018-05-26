@@ -34,6 +34,7 @@
     "redux-thunk": "^2.2.0",
     "truffle": "^4.1.11",
     "truffle-hdwallet-provider": "^0.0.5",
+    "react-responsive-spritesheet": "^2.3.6",
     "web3": "^1.0.0-beta.34"
   }
 }
