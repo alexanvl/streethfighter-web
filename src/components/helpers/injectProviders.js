@@ -1,6 +1,6 @@
-import { injectMuiThemeProvider, injectReduxProvider } from '../lib';
+import { injectReduxProvider } from '../lib';
 
-export default (InnerComponent, customTheme = {}, initialState = null) => {
+export default (InnerComponent, initialState = null) => {
   return injectReduxProvider(
     InnerComponent,
     initialState,

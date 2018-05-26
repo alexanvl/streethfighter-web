@@ -36,6 +36,6 @@ export default (InnerComponent) => {
         return this.state.authed
           ? (<InnerComponent {...this.props} />) : (<div />);
       }
-    },
+    }
   );
 }

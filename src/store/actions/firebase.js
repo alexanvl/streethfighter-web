@@ -27,7 +27,7 @@ export function listenOn(key, cb) {
   return { type: actions.LISTEN_ON, key, cb };
 }
 
-export function listenModelOff(key, cb) {
+export function listenOff(key, cb) {
   return { type: actions.LISTEN_OFF, key, cb };
 }
 
