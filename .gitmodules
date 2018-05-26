@@ -1,0 +1,3 @@
+[submodule "src/js-layer2lib"]
+	path = src/js-layer2lib
+	url = git@github.com:layer2lib/js-layer2lib.git
