@@ -48,7 +48,7 @@ export function listenOn(ref, handler) {
     }
   };
 
-  return firebase.database().ref(ref).remove()
+  return firebase.database().ref(ref)
     .then(() => firebase.database().ref(ref).on('value', handleSnapshot))
     .then(() => handleSnapshot);
 }
