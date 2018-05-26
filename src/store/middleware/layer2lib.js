@@ -5,7 +5,6 @@ import firebase from './firebase/api';
 const Web3 = require('web3');
 const web3 = new Web3();
 
-const firebaseProxy = new Layer2lib.FirebaseStorageProxy(firebase);
 let layer2lib = null
 
 export default ({ dispatch, getState }) => {
@@ -13,8 +12,10 @@ export default ({ dispatch, getState }) => {
 
   return next => (action) => {
     switch (action.type) {
+
       case actionTypes.layer2lib.INIT: {
         if (!layer2lib) {
+          const firebaseProxy = new Layer2lib.FirebaseStorageProxy(firebase, `layer2_${action.publicKey}/`);
           const options = {
             db: firebaseProxy,
             privateKey: action.privateKey
