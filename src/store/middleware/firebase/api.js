@@ -42,15 +42,7 @@ export function signOut() {
 }
 
 export function listenOn(ref, handler) {
-  const handleSnapshot = (ss) => {
-    if (ss.val()) {
-      handler(ss.val());
-    }
-  };
-
-  return firebase.database().ref(ref).remove()
-    .then(() => firebase.database().ref(ref).on('value', handleSnapshot))
-    .then(() => handleSnapshot);
+  return firebase.database().ref(ref).on('value', ss => handler(ss.val()))
 }
 
 export function listenOff(ref, listener) {
@@ -59,4 +51,8 @@ export function listenOff(ref, listener) {
 
 export function set(ref, data) {
   return firebase.database().ref(ref).set(data);
+}
+
+export function update(ref, data) {
+  return firebase.database().ref(ref).update(data);
 }

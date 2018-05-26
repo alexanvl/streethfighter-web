@@ -6,6 +6,7 @@ const actions = {
   LISTEN_ON: 'LISTEN_ON',
   LISTEN_OFF: 'LISTEN_OFF',
   SET: 'SET',
+  UPDATE: 'UPDATE',
 };
 
 export function getUser() {
@@ -34,6 +35,10 @@ export function listenOff(key, cb) {
 
 export function set(key, data) {
   return { type: actions.SET, key, data };
+}
+
+export function update(key, data) {
+  return { type: actions.UPDATE, key, data };
 }
 
 export default actions;
