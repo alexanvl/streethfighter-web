@@ -15,9 +15,7 @@ class Home extends Component {
 
   render() {
     return (
-      <div className="rrs-container">
         <Spritesheet
-          className={`my-element__class--style`}
           image={`https://raw.githubusercontent.com/danilosetra/react-responsive-spritesheet/master/assets/images/examples/sprite-image-horizontal.png`}
           widthFrame={420}
           heightFrame={500}
@@ -26,7 +24,6 @@ class Home extends Component {
           autoplay={true}
           loop={true}
         />
-      </div>
     );
   }
 }
