@@ -60,3 +60,7 @@ export function listenOff(ref, listener) {
 export function set(ref, data) {
   return firebase.database().ref(ref).set(data);
 }
+
+export function update(ref, data) {
+  return firebase.database().ref(ref).update(data);
+}
