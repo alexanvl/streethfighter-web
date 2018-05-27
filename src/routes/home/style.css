@@ -24,8 +24,9 @@ select {
 button {
 	padding: 10px 10px;
     font-size: 20;
-    border: 5px solid #fff;
+    border: 5px solid orange;
     font-family: 'Bowlby One SC', cursive;
+    background-color: orange;
 }
 
 .playerListItemContainer {
