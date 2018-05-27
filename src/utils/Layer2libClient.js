@@ -34,9 +34,6 @@ class Layer2libClient {
     const myAccount = this.myAccount;
     this.layer2lib.initGSC()
 
-    // clear database
-    await this.layer2lib.gsc.clearStorage()
-
     let myAgreement = {
       ID: `agreement_${myAccount}${counterpartyAccount}`,
       types: ['Ether'],
