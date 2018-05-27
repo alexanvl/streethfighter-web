@@ -38,163 +38,6 @@ class Layer2LibTester extends Component {
     this.setState({ layer2Initialized: true, myAccount });
   }
 
-  joinAgreement = async (agreement, state) => {
-    console.log('Joining Agreement');
-    const myAccount = this.state.myAccount;
-    const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
-
-    let myAgreement = JSON.parse(JSON.stringify(agreement))
-    myAgreement.dbSalt = this.state.myAccount
-
-    await this.layer2lib.joinGSCAgreement(myAgreement, state)
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { event: 'updateAcceptedAgreement', agreement: myAgreement });
-    console.log('Joined Agreement');
-  }
-
-
-  updateAcceptedAgreement = async agreement => {
-    console.log('Updating Accepted Agreement');
-    const myAgreement = Object.assign({}, agreement, { dbSalt: this.state.myAccount});
-    await this.layer2lib.gsc.updateAgreement(myAgreement);
-    console.log('Updated Accepted Agreement');
-  }
-
-  startAgreement = async counterpartyAccount => {
-    const myAccount = this.state.myAccount;
-    this.layer2lib.initGSC()
-
-    // clear database
-    await this.layer2lib.gsc.clearStorage()
-
-    let myAgreement = {
-      dbSalt: myAccount, // for testing multiple layer2 instances on same db
-      ID: `agreement_${myAccount}${counterpartyAccount}`,
-      types: ['Ether'],
-      partyA: myAccount, // Viewer or performer public key
-      partyB: counterpartyAccount, // Spank Hub public key
-      balanceA: myBalance,
-      balanceB: counterpartyBalace
-    }
-
-    let agreementId = myAgreement.ID + myAgreement.dbSalt
-
-    await this.layer2lib.createGSCAgreement(myAgreement)
-
-    let My_agreement = await this.layer2lib.getGSCAgreement(agreementId)
-    let MyAgreementState = await this.layer2lib.gsc.getStates(agreementId)
-    MyAgreementState = MyAgreementState[0]
-
-    console.log('My agreement created and stored.. sending to other');
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { event: 'joinAgreement', state: MyAgreementState, agreement: myAgreement });
-  }
-
-  openChannel = async agreement => {
-    console.log('Opening Channel');
-    const myAccount = this.state.myAccount;
-    const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
-
-    const dbSalt = myAccount;
-    const ID = `channel_${myAccount}${counterpartyAccount}`;
-    const agreementId = agreement.ID;
-    let myChannel = {
-      dbSalt, // for testing multiple layer2 instances on same db
-      ID,
-      agreementID: agreementId,
-      type: 'ether',
-      balanceA: web3.toWei(0.03, 'ether'),
-      balanceB: web3.toWei(0.05, 'ether')
-    }
-
-    await this.layer2lib.openGSCChannel(myChannel)
-
-    let My_chan = await this.layer2lib.gsc.getChannel(`${ID}${dbSalt}`)
-    const My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}${dbSalt}`)
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan });
-    console.log('Opened Channel');
-  }
-
-  joinChannel = async (chan, agreement) => {
-    console.log('Joining channel');
-    const myAccount = this.state.myAccount;
-    const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
-
-    const dbSalt = myAccount;
-    const ID = chan.ID;
-    const agreementId = agreement.ID;
-
-    let myChan = JSON.parse(JSON.stringify(chan))
-    myChan.dbSalt = dbSalt
-    let My_agreement = JSON.parse(JSON.stringify(agreement))
-    My_agreement.dbSalt = dbSalt
-    await this.layer2lib.gsc.joinChannel(myChan, My_agreement, myChan.stateRaw)
-
-    let My_chan = await this.layer2lib.gsc.getChannel(`${ID}${dbSalt}`)
-    My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}${dbSalt}`)
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { chan: My_chan });
-    console.log('Channel joined');
-  }
-
-  updateAcceptedChannel = async channel => {
-    const myAccount = this.state.myAccount;
-    const dbSalt = myAccount;
-    channel.dbSalt = dbSalt
-    await this.layer2lib.gsc.updateChannel(channel)
-  }
-
-  updateConfirmedUpdate = async (channel, agreement) => {
-    const myAccount = this.state.myAccount;
-    const dbSalt = myAccount;
-    agreement.dbSalt = dbSalt
-    channel.dbSalt = dbSalt
-    await this.layer2lib.gsc.updateAgreement(agreement)
-    await this.layer2lib.gsc.updateChannel(channel)
-  }
-
-  sendUpdate = async (channel, agreement) => {
-    console.log('You are initiating state update')
-
-    const myAccount = this.state.myAccount;
-    const dbSalt = myAccount;
-    const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
-
-    let updateState = {
-      isClose: 0,
-      balanceA: web3.toWei(0.06, 'ether'),
-      balanceB: web3.toWei(0.02, 'ether')
-    }
-
-    await this.layer2lib.gsc.initiateUpdateChannelState(channel.ID, updateState, false)
-
-    const My_chan = await this.layer2lib.gsc.getChannel(`${channel.ID}${dbSalt}`)
-    const My_agreement = await this.layer2lib.getGSCAgreement(`${agreement.ID}${dbSalt}`)
-    const MyChanState = await this.layer2lib.gsc.getStates(`${channel.ID}${dbSalt}`)
-    const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreement.ID}${dbSalt}`)
-
-    console.log('Sending channel state update to counterparty')
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan, updateState });
-  }
-
-  confirmUpdate = async (channel, agreement, updateState) => {
-    console.log('You are confirming state update')
-    let myChannel = JSON.parse(JSON.stringify(channel))
-    let myAgreement = JSON.parse(JSON.stringify(agreement))
-    const myAccount = this.state.myAccount;
-    const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
-    const dbSalt = myAccount;
-    myChannel.dbSalt = dbSalt
-    myAgreement.dbSalt = dbSalt
-
-    await this.layer2lib.gsc.confirmUpdateChannelState(myChannel, myAgreement, updateState)
-
-    const My_chan = await this.layer2lib.gsc.getChannel(`${channel.ID}${dbSalt}`)
-    const My_agreement = await this.layer2lib.getGSCAgreement(`${agreement.ID}${dbSalt}`)
-    const MyChanState = await this.layer2lib.gsc.getStates(`${channel.ID}${dbSalt}`)
-    const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreement.ID}${dbSalt}`)
-
-    console.log('You confirmed channel state update, sending ack to counterparty')
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan, updateState });
-  }
-
   render() {
     const { layer2Initialized, myAccount } = this.state;
     return <div>
@@ -207,7 +50,7 @@ class Layer2LibTester extends Component {
       </div>
       <button onClick={this.initLayer2}>initLayer2</button></div>}
 
-      {layer2Initialized && <Lobby myAccount={this.layer2libClient.state.myAccount}
+      {layer2Initialized && <Lobby myAccount={this.state.myAccount}
         startAgreement={this.layer2libClient.startAgreement}
         joinAgreement={this.layer2libClient.joinAgreement}
         updateAcceptedAgreement={this.layer2libClient.updateAcceptedAgreement}
@@ -218,10 +61,6 @@ class Layer2LibTester extends Component {
         confirmUpdate={this.layer2libClient.confirmUpdate}
         updateConfirmedUpdate={this.layer2libClient.updateConfirmedUpdate}
       />}
-      {this.state.agreement && !this.state.agreement.openPending && <div><h1>Channel Stuff</h1>
-      <div>
-        <button onClick={_ => this.props.openChannel()}>Open Channel</button>
-      </div></div>}
     </div>
   }
 
