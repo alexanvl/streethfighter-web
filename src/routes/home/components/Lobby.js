@@ -47,7 +47,7 @@ class Lobby extends Component {
         {!proposal.agreement.openPending && <button onClick={_ => this.props.updateAgreement(proposal.agreement)}>Update Agreement</button>}
         {<button onClick={_ => this.props.openChannel(proposal.agreement)}>Open Channel</button>}
         {proposal.Agreement && proposal.chan && <button onClick={_ => this.props.joinChannel(proposal.chan, proposal.Agreement)}>Join Channel</button>}
-        {proposal.Agreement && !proposal.chan && <button onClick={_ => this.props.updateAcceptedChannel(proposal.Agreement)}>Update Accepted Channel</button>}
+        {proposal.chan && !proposal.chan.openPending && <button onClick={_ => this.props.updateAcceptedChannel(proposal.chan)}>Update Accepted Channel</button>}
       </div>}
     </div>;
   }

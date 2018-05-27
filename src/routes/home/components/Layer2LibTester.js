@@ -127,7 +127,7 @@ class Layer2LibTester extends Component {
     const counterpartyAccount = this.refs.counterpartyAccountSelector.value;
 
     const dbSalt = myAccount;
-    const ID = `channel_${myAccount}${counterpartyAccount}`;
+    const ID = chan.ID;
     const agreementId = Agreement.ID;
 
     let myChan = JSON.parse(JSON.stringify(chan))
@@ -149,14 +149,14 @@ class Layer2LibTester extends Component {
     // let txs_channel = await this.layer2lib.gsc.getTransactions(`${ID}${dbSalt}`)
     //console.log(txs_agreement)
     //console.log(txs_channel)
-    this.props.firebaseActions.update(`agreementProposal/${Agreement.partyA}`, { Agreement: My_agreement });
+    this.props.firebaseActions.update(`agreementProposal/${Agreement.partyA}`, { chan: My_chan });
   }
 
-  updateAcceptedChannel = async Agreement => {
+  updateAcceptedChannel = async channel => {
     const myAccount = this.state.myAccount;
     const dbSalt = myAccount;
-    Agreement.dbSalt = dbSalt
-    await this.layer2lib.gsc.updateAgreement(Agreement)
+    channel.dbSalt = dbSalt
+    await this.layer2lib.gsc.updateChannel(channel)
   }
 
   render() {
