@@ -22,6 +22,7 @@ export default ({ dispatch, getState }) => {
           }
 
           layer2lib = new Layer2lib("http://localhost:8545", options);
+          layer2lib.initGSC();
         }
         return layer2lib;
       }

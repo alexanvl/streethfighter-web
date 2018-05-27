@@ -71,15 +71,15 @@ class Layer2LibTester extends Component {
       balanceB: counterpartyBalace
     }
 
-    let entryID = myAgreement.ID + myAgreement.dbSalt
+    let agreementId = myAgreement.ID + myAgreement.dbSalt
 
     await this.layer2lib.createGSCAgreement(myAgreement)
 
-    let My_agreement = await this.layer2lib.getGSCAgreement(entryID)
+    let My_agreement = await this.layer2lib.getGSCAgreement(agreementId)
     //console.log(col)
-    let My_tx = await this.layer2lib.gsc.getTransactions(entryID)
+    let My_tx = await this.layer2lib.gsc.getTransactions(agreementId)
     //console.log(Alice_tx)
-    let MyAgreementState = await this.layer2lib.gsc.getStates(`${myAccount}${counterpartyAccount}${myAccount}`)
+    let MyAgreementState = await this.layer2lib.gsc.getStates(agreementId)
     //Grab the latest (currently only state in list)
     MyAgreementState = MyAgreementState[0]
     //console.log(AliceAgreementState)
@@ -92,25 +92,28 @@ class Layer2LibTester extends Component {
     //TODO: do send
   }
 
-  openChannel = async _ => {
+  openChannel = async agreement => {
     const myAccount = this.state.myAccount;
     const counterpartyAccount = this.refs.counterpartyAccountSelector.value;
 
     const dbSalt = myAccount;
     const ID = `channel_${myAccount}${counterpartyAccount}`;
-    const agreementId = this.state.myAgreement.id;
-
+    const agreementId = agreement.ID;
     let myChannel = {
       dbSalt, // for testing multiple layer2 instances on same db
       ID,
-      agreementID: 'spankHub1337',
+      agreementID: agreementId,
       type: 'ether',
       balanceA: web3.toWei(0.03, 'ether'),
       balanceB: web3.toWei(0.05, 'ether')
     }
 
+    console.log('start');
+
     await this.layer2lib.openGSCChannel(myChannel)
 
+    console.log('wait');
+    return;
     let My_chan = await this.layer2lib.gsc.getChannel(`${ID}${dbSalt}`)
     //console.log(Alice_chan)
     const My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}${dbSalt}`)
@@ -119,7 +122,9 @@ class Layer2LibTester extends Component {
     //console.log(AliceChanState)
     // const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreementId}${dbSalt}`)
     //console.log(AliceAgreementState)
-    this.props.firebaseActions.update(`agreementProposal/${this.state.agreement.partyA}`, { Agreement: My_agreement, chan: My_chan });
+    this.props.firebaseActions.update(`agreementProposal/${My_agreement.partyA}`, { Agreement: My_agreement, chan: My_chan });
+    console.log('done');
+
   }
 
   joinChannel = async (chan, Agreement) => {
@@ -128,7 +133,7 @@ class Layer2LibTester extends Component {
 
     const dbSalt = myAccount;
     const ID = `channel_${myAccount}${counterpartyAccount}`;
-    const agreementId = this.state.myAgreement.id;
+    const agreementId = Agreement.id;
 
     let myChan = JSON.parse(JSON.stringify(chan))
     myChan.dbSalt = dbSalt
@@ -149,7 +154,7 @@ class Layer2LibTester extends Component {
     // let txs_channel = await this.layer2lib.gsc.getTransactions(`${ID}${dbSalt}`)
     //console.log(txs_agreement)
     //console.log(txs_channel)
-    this.props.firebaseActions.update(`agreementProposal/${this.state.agreement.partyA}`, { Agreement: My_agreement });
+    this.props.firebaseActions.update(`agreementProposal/${Agreement.partyA}`, { Agreement: My_agreement });
   }
 
   updateAcceptedChannel = async Agreement => {
@@ -185,7 +190,13 @@ class Layer2LibTester extends Component {
         <pre>{JSON.stringify(this.state.myAgreement, undefined, 2)}</pre>
       </div>
     </div>}
-      {layer2Initialized && <Lobby myAccount={this.state.myAccount} joinAgreement={this.joinAgreement} updateAgreement={this.updateAcceptedAgreement}/>}
+      {layer2Initialized && <Lobby myAccount={this.state.myAccount}
+        joinAgreement={this.joinAgreement}
+        updateAgreement={this.updateAcceptedAgreement}
+        openChannel={this.openChannel}
+        joinChannel={this.joinChannel}
+        updateAcceptedChannel={this.updateAcceptedChannel}
+      />}
       {this.state.agreement && !this.state.agreement.openPending && <div><h1>Channel Stuff</h1>
       <div>
         <button onClick={_ => this.props.openChannel()}>Open Channel</button>
