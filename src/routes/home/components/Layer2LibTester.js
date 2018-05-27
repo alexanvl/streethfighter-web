@@ -45,7 +45,7 @@ class Layer2LibTester extends Component {
     this.setState({
       myAgreement
     })
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { nonce: 1, event: 'updateAcceptedAgreement', agreement: myAgreement });
+    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { event: 'updateAcceptedAgreement', agreement: myAgreement });
     console.log('Joined Agreement');
   }
 
@@ -89,10 +89,11 @@ class Layer2LibTester extends Component {
     this.setState({
       myAgreement
     })
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { nonce: 0, event: 'joinAgreement', state: MyAgreementState, agreement: myAgreement });
+    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { event: 'joinAgreement', state: MyAgreementState, agreement: myAgreement });
   }
 
   openChannel = async agreement => {
+    console.log('Opening Channel');
     const myAccount = this.state.myAccount;
     const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
 
@@ -113,6 +114,7 @@ class Layer2LibTester extends Component {
     let My_chan = await this.layer2lib.gsc.getChannel(`${ID}${dbSalt}`)
     const My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}${dbSalt}`)
     this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan });
+    console.log('Opened Channel');
   }
 
   joinChannel = async (chan, agreement) => {

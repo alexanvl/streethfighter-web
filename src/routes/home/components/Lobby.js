@@ -14,12 +14,6 @@ class Lobby extends Component {
   }
 
   updateProposal = proposal => {
-    proposal && console.log('Proposal received:' + proposal.nonce);
-    const firstProposal = !this.state.proposal && proposal;
-    const newProposal = this.state.proposal && this.state.proposal.nonce < proposal.nonce;
-    if (firstProposal || newProposal) {
-      this.props[proposal.event](proposal.agreement, proposal.state, proposal.channel);
-    }
     this.setState({ proposal });
   }
 
@@ -55,7 +49,7 @@ class Lobby extends Component {
       {proposal && <div>
         from: {proposal.agreement.partyA}
         {proposal.agreement.openPending && <button onClick={_ => this.props.joinAgreement(proposal.agreement, proposal.state)}>Join Agreement</button>}
-        {!proposal.agreement.openPending && <button onClick={_ => this.props.updateAgreement(proposal.agreement)}>Update Agreement</button>}
+        {!proposal.agreement.openPending && <button onClick={_ => this.props.updateAcceptedAgreement(proposal.agreement)}>Update Agreement</button>}
         {!proposal.agreement.openPending && <button onClick={_ => this.props.openChannel(proposal.agreement)}>Open Channel</button>}
         {proposal.agreement && proposal.chan && <button onClick={_ => this.props.joinChannel(proposal.chan, proposal.agreement)}>Join Channel</button>}
         {proposal.chan && !proposal.chan.openPending && <button onClick={_ => this.props.updateAcceptedChannel(proposal.chan)}>Update Accepted Channel</button>}
