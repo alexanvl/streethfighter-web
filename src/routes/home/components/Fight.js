@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
+// import bgImage from './assets/background.jpg';
 
 import Matter from 'matter-js';
 
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
 import Character from './character';
-//import GameStore from './stores/game-store';
-import { init } from '../../../store/actions/layer2lib';
-const Web3 = require('web3')
-const web3 = new Web3()
-web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
-
 
 class Fight extends Component {
   // static propTypes = {
@@ -37,17 +32,29 @@ class Fight extends Component {
     ]);
   }
 
-  // componentWillUnmount() {
-  //   this.stopMusic();
-  //   this.keyListener.unsubscribe();
-  // }
+  componentWillUnmount() {
+    // this.stopMusic();
+    this.keyListener.unsubscribe();
+  }
 
   render() {
+    let stageStyle = {
+      backgroundImage: "url('./src/assets/background.jpg')"
+    };
     return (
       <Loop>
-        <Stage style={{ background: '#3a9bdc' }}>
+        <Stage style={ stageStyle }>
           <World onInit={this.physicsInit}>
             <Character
+              fighter={this.fighters[0]}
+              isActive={false}
+              side="l"
+              keys={this.KeyListener}
+            />
+            <Character
+              fighter={this.fighters[1]}
+              isActive={true}
+              side="r"
               keys={this.KeyListener}
             />
           </World>
@@ -77,6 +84,7 @@ class Fight extends Component {
   constructor(props) {
     super(props);
     this.KeyListener = new KeyListener();
+    this.fighters = ['Vitalik', 'Satoshi'];
   }
 }
 
