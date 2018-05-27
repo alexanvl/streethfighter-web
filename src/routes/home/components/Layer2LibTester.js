@@ -118,21 +118,22 @@ class Layer2LibTester extends Component {
     //console.log(AliceChanState)
     // const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreementId}${dbSalt}`)
     //console.log(AliceAgreementState)
-    this.props.firebaseActions.update(`agreementProposal/${My_agreement.partyB}`, { Agreement: My_agreement, chan: My_chan });
+    this.props.firebaseActions.update(`agreementProposal/${My_agreement.partyB}`, { agreement: My_agreement, chan: My_chan });
 
   }
 
-  joinChannel = async (chan, Agreement) => {
+  joinChannel = async (chan, agreement) => {
+    console.log('Joining channel');
     const myAccount = this.state.myAccount;
     const counterpartyAccount = this.refs.counterpartyAccountSelector.value;
 
     const dbSalt = myAccount;
     const ID = chan.ID;
-    const agreementId = Agreement.ID;
+    const agreementId = agreement.ID;
 
     let myChan = JSON.parse(JSON.stringify(chan))
     myChan.dbSalt = dbSalt
-    let My_agreement = JSON.parse(JSON.stringify(Agreement))
+    let My_agreement = JSON.parse(JSON.stringify(agreement))
     My_agreement.dbSalt = dbSalt
     await this.layer2lib.gsc.joinChannel(myChan, My_agreement, myChan.stateRaw)
 
@@ -149,7 +150,8 @@ class Layer2LibTester extends Component {
     // let txs_channel = await this.layer2lib.gsc.getTransactions(`${ID}${dbSalt}`)
     //console.log(txs_agreement)
     //console.log(txs_channel)
-    this.props.firebaseActions.update(`agreementProposal/${Agreement.partyA}`, { chan: My_chan });
+    this.props.firebaseActions.update(`agreementProposal/${agreement.partyA}`, { chan: My_chan });
+    console.log('Channel joined');
   }
 
   updateAcceptedChannel = async channel => {
@@ -157,6 +159,67 @@ class Layer2LibTester extends Component {
     const dbSalt = myAccount;
     channel.dbSalt = dbSalt
     await this.layer2lib.gsc.updateChannel(channel)
+  }
+
+  updateConfirmedUpdate = async (channel, agreement) => {
+    const myAccount = this.state.myAccount;
+    const dbSalt = myAccount;
+    agreement.dbSalt = dbSalt
+    channel.dbSalt = dbSalt
+    await this.layer2lib.gsc.updateAgreement(agreement)
+    await this.layer2lib.gsc.updateChannel(channel)
+  }
+
+  sendUpdate = async (channel, agreement) => {
+    console.log('You are initiating state update')
+
+    const myAccount = this.state.myAccount;
+    const dbSalt = myAccount;
+
+    let updateState = {
+      isClose: 0,
+      balanceA: web3.toWei(0.06, 'ether'),
+      balanceB: web3.toWei(0.02, 'ether')
+    }
+
+    await this.layer2lib.gsc.initiateUpdateChannelState(channel.ID, updateState, false)
+
+    const My_chan = await this.layer2lib.gsc.getChannel(`${channel.ID}${dbSalt}`)
+    //console.log(Bob_chan)
+    const My_agreement = await this.layer2lib.getGSCAgreement(`${agreement.ID}${dbSalt}`)
+    //console.log(Bob_agreement)
+    const MyChanState = await this.layer2lib.gsc.getStates(`${channel.ID}${dbSalt}`)
+    //console.log(BobChanState)
+    const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreement.ID}${dbSalt}`)
+    //console.log(BobAgreementState)
+
+    console.log('Sending channel state update to counterparty')
+    this.props.firebaseActions.update(`agreementProposal/${agreement.partyA}`, { agreement: My_agreement, chan: My_chan, updateState });
+  }
+
+  confirmUpdate = async (channel, agreement, updateState) => {
+    console.log('You are confirming state update')
+    let myChannel = JSON.parse(JSON.stringify(channel))
+    let myAgreement = JSON.parse(JSON.stringify(agreement))
+    const myAccount = this.state.myAccount;
+    const dbSalt = myAccount;
+    myChannel.dbSalt = dbSalt
+    myAgreement.dbSalt = dbSalt
+
+    await this.layer2lib.gsc.confirmUpdateChannelState(myChannel, myAgreement, updateState)
+
+    const My_chan = await this.layer2lib.gsc.getChannel(`${channel.ID}${dbSalt}`)
+    //console.log(Alice_chan)
+    const My_agreement = await this.layer2lib.getGSCAgreement(`${agreement.ID}${dbSalt}`)
+    //console.log(Alice_agreement)
+    // console.log(Alice_agreement.stateSignatures)
+    const MyChanState = await this.layer2lib.gsc.getStates(`${channel.ID}${dbSalt}`)
+    //console.log(AliceChanState)
+    const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreement.ID}${dbSalt}`)
+    //console.log(AliceAgreementState)
+
+    console.log('You confirmed channel state update, sending ack to counterparty')
+    this.props.firebaseActions.update(`agreementProposal/${agreement.partyB}`, { agreement: My_agreement, chan: My_chan, updateState });
   }
 
   render() {
@@ -179,7 +242,6 @@ class Layer2LibTester extends Component {
         </select>
       </div>
       <button onClick={this.startAgreement}>Start Agreement</button>
-      <button onClick={this.joinAgreement}>Join Agreement</button>
       <div>
         <h1>My agreement details:</h1>
         <pre>{JSON.stringify(this.state.myAgreement, undefined, 2)}</pre>
@@ -191,6 +253,9 @@ class Layer2LibTester extends Component {
         openChannel={this.openChannel}
         joinChannel={this.joinChannel}
         updateAcceptedChannel={this.updateAcceptedChannel}
+        sendUpdate={this.sendUpdate}
+        confirmUpdate={this.confirmUpdate}
+        updateConfirmedUpdate={this.updateConfirmedUpdate}
       />}
       {this.state.agreement && !this.state.agreement.openPending && <div><h1>Channel Stuff</h1>
       <div>

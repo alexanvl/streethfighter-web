@@ -45,9 +45,12 @@ class Lobby extends Component {
         from: {proposal.agreement.partyA}
         {proposal.agreement.openPending && <button onClick={_ => this.props.joinAgreement(proposal.agreement, proposal.state)}>Join Agreement</button>}
         {!proposal.agreement.openPending && <button onClick={_ => this.props.updateAgreement(proposal.agreement)}>Update Agreement</button>}
-        {<button onClick={_ => this.props.openChannel(proposal.agreement)}>Open Channel</button>}
-        {proposal.Agreement && proposal.chan && <button onClick={_ => this.props.joinChannel(proposal.chan, proposal.Agreement)}>Join Channel</button>}
+        {!proposal.agreement.openPending && <button onClick={_ => this.props.openChannel(proposal.agreement)}>Open Channel</button>}
+        {proposal.agreement && proposal.chan && <button onClick={_ => this.props.joinChannel(proposal.chan, proposal.agreement)}>Join Channel</button>}
         {proposal.chan && !proposal.chan.openPending && <button onClick={_ => this.props.updateAcceptedChannel(proposal.chan)}>Update Accepted Channel</button>}
+        {proposal.chan && <button onClick={_ => this.props.sendUpdate(proposal.chan, proposal.agreement)}>Send Update</button>}
+        {proposal.chan && <button onClick={_ => this.props.confirmUpdate(proposal.chan, proposal.agreement, proposal.updateState)}>Confirm Update</button>}
+        {proposal.chan && <button onClick={_ => this.props.updateConfirmedUpdate(proposal.chan, proposal.agreement)}>Update Confirmed Update</button>}
       </div>}
     </div>;
   }
