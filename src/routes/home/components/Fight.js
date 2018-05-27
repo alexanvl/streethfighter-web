@@ -55,6 +55,7 @@ class Fight extends Component {
               side="l"
               keys={this.KeyListener}
               health={this.fighters[0].health}
+              fireChannel={'makeMoveA'}
             />
             <Character
               fighter={this.fighters[1].name}
@@ -62,6 +63,7 @@ class Fight extends Component {
               side="r"
               keys={this.KeyListener}
               health={this.fighters[1].health}
+              fireChannel={'makeMoveB'}
             />
           </World>
         </Stage>

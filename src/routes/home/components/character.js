@@ -4,9 +4,10 @@ import Matter from 'matter-js';
 
 import { AudioPlayer, Body, Sprite } from 'react-game-kit';
 import HealthBar from './healthBar';
+import { injectRedux } from '../../../components';
 
 // @observer
-export default class Character extends Component {
+class Character extends Component {
   static propTypes = {
     keys: PropTypes.object,
     side: PropTypes.string,
@@ -29,12 +30,6 @@ export default class Character extends Component {
     this.fighter = props.fighter;
     this.health = props.health;
 
-    this.isPunching = false;
-    this.isKicking = false;
-    this.isUltraing = false;
-    this.isKOd = false;
-    this.isWon = false;
-    this.isBlocked =false;
     this.lastX = 0;
 
     this.state = {
@@ -46,28 +41,45 @@ export default class Character extends Component {
         x: this.side == 'l' ? 0 : 400,
         y: 20
       },
-      characterHealth: 2000
+      characterHealth: 2000,
     };
 
     this.handlePlayStateChanged = this.handlePlayStateChanged.bind(this);
     this.punch = this.punch.bind(this);
     this.kick = this.kick.bind(this);
+    window.kick = this.kick;
     this.ultra = this.ultra.bind(this);
     this.KO = this.KO.bind(this);
     this.victory = this.victory.bind(this);
     this.block = this.block.bind(this);
-
     this.checkKeys = this.checkKeys.bind(this);
     this.update = this.update.bind(this);
+    this.chilling = true;
+    this.turnAvailable = true;
+    this.fireMoves = '';
   }
 
   componentDidMount() {
     // this.jumpNoise = new AudioPlayer('/assets/jump.wav');
     Matter.Events.on(this.context.engine, 'afterUpdate', this.update);
+    this.props.firebaseActions.listenOn(this.props.fireChannel, this.makeMove);
   }
 
-  componentWillUnmount() {
-    Matter.Events.off(this.context.engine, 'afterUpdate', this.update);
+  makeMove = (fireMoves) => {
+    if(!this.turnAvailable || !fireMoves) {
+      return;
+    }
+    this.fireMoves = fireMoves.moves || '';
+    const move = fireMoves.moves.charAt(fireMoves.moves.length - 1);
+    if(!move) {
+      return;
+    }
+    const moves = {
+      '0': 'punch',
+      '1': 'kick',
+      '3': 'ultra',
+    };
+    this[moves[move]](true);
   }
 
   getWrapperStyles() {
@@ -125,32 +137,43 @@ export default class Character extends Component {
     Matter.Body.setVelocity(body, { x, y: 0 });
   };
 
-  punch() {
-    this.isPunching = true;
+  punch(skipFire) {
     this.setState({
       characterState: 0,
       repeat: false,
     });
+    this.turnAvailable = false;
+    if(!skipFire) {
+      this.props.firebaseActions.update(this.props.fireChannel, { moves: this.fireMoves + '0' });
+      this.fireMoves = this.fireMoves + '0';
+    }
   };
 
-  kick() {
-    this.isKicking = true;
+  kick(skipFire) {
     this.setState({
       characterState: 1,
       repeat: false,
     });
+    this.turnAvailable = false;
+    if(!skipFire) {
+      this.props.firebaseActions.update(this.props.fireChannel, { moves: this.fireMoves + '1' });
+      this.fireMoves = this.fireMoves + '1';
+    }
   };
 
-  ultra() {
-    this.isUltraing = true;
+  ultra(skipFire) {
     this.setState({
       characterState: 3,
       repeat: false,
     });
+    this.turnAvailable = false;
+    if(!skipFire) {
+      this.props.firebaseActions.update(this.props.fireChannel, { moves: this.fireMoves + '3' });
+      this.fireMoves = this.fireMoves + '3';
+    }
   };
 
   KO() {
-    this.isKOd = true;
     this.setState({
       characterState: 6,
       repeat: false,
@@ -158,7 +181,6 @@ export default class Character extends Component {
   };
 
   block() {
-    this.isBlocked = true;
     this.setState({
       characterState: 4,
       repeat: false,
@@ -166,7 +188,6 @@ export default class Character extends Component {
   };
 
   victory() {
-    this.isWon = true;
     this.setState({
       characterState: 5,
       repeat: true,
@@ -182,89 +203,42 @@ export default class Character extends Component {
   checkKeys(shouldMoveStageLeft, shouldMoveStageRight) {
     const { keys, store } = this.props;
     const { body } = this.body;
-
-    let characterState = 2;
-
     if (this.isActive) {
       if (keys.isDown(75)) {
-        // if (shouldMoveStageLeft) {
-        //   this.state.setStageX(this.state.stageX + 5);
-        // }
-
         this.move(body, -5);
         this.kick();
-        characterState = 1;
       } else if (keys.isDown(80)) {
         this.move(body, 5);
         this.punch();
-        characterState = 0;
       } else if (keys.isDown(85)) {
         this.loseHealth(2);
         this.move(body, 5);
         this.ultra();
-        characterState = 3;
       } else if (keys.isDown(keys.LEFT)) {
         this.KO();
-        characterState = 6;
       } else if (keys.isDown(keys.RIGHT)) {
         this.victory();
-        characterState = 5;
       } else if (keys.isDown(keys.SPACE)) {
         this.block();
-        characterState = 4;
       }
-
-      this.setState({
-        characterState,
-        repeat: characterState < 6,
-      });
-
     }
   };
 
   update() {
     const { body } = this.body;
 
-    const midPoint = Math.abs(this.state.stageX) + 448;
+    if (this.turnAvailable) {
+      this.checkKeys();
+    }
 
-    const shouldMoveStageLeft = body.position.x < midPoint && this.state.stageX < 0;
-    const shouldMoveStageRight =
-      body.position.x > midPoint && this.state.stageX > -2048;
-
-    // const velY = parseFloat(body.velocity.y.toFixed(10));
-
-    // if (velY === 0) {
-    //   this.isJumping = false;
-    //   Matter.Body.set(body, 'friction', 0.9999);
-    // }
-
-    if (this.state.characterHealth == 0) {
-      console.log("KO!");
-      this.KO();
-      let characterState = 6;
+    if (!this.state.spritePlaying) {
       this.setState({
-        characterState,
+        characterState: 2,
         repeat: true,
       });
+      this.turnAvailable = true;
     }
-
-    if (!this.isJumping && !this.isPunching && !this.isLeaving) {
-      this.checkKeys(shouldMoveStageLeft, shouldMoveStageRight);
-
-      // this.state.setCharacterPosition(body.position);
-    } else {
-      if (this.isPunching && this.state.spritePlaying === false) {
-        this.isPunching = false;
-      }
-      if (this.isJumping) {
-        // this.state.setCharacterPosition(body.position);
-      }
-      const targetX = this.state.stageX + (this.lastX - body.position.x);
-      // if (shouldMoveStageLeft || shouldMoveStageRight) {
-      //   this.state.setStageX(targetX);
-      // }
-    }
-
-    this.lastX = body.position.x;
   };
 }
+
+export default injectRedux(Character);
