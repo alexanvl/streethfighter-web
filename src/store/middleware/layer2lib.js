@@ -21,7 +21,7 @@ export default ({ dispatch, getState }) => {
             privateKey: action.privateKey
           }
 
-          layer2lib = new Layer2lib("http://localhost:8545", options);
+          layer2lib = new Layer2lib("https://rinkeby.infura.io", options);
           layer2lib.initGSC();
         }
         return layer2lib;
