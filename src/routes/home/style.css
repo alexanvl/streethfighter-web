@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css?family=Bowlby+One+SC|Passion+One');
+
+/*font-family: 'Passion One', cursive;*/
+body {
+	background-color: black;
+}
+
+.layer2LobbyContainer {
+	/*border: 2px #ccc solid;*/
+	text-align: center;
+	height: 100%;
+	padding-top: 2.5em;
+	font-size: 2em;
+	color: #fff;
+	/*font-family: 'Bowlby One SC', cursive;*/
+	font-family: 'Passion One', cursive;
+}
+
+select {
+	height: 50px;
+	font-size: 24px;
+}
+
+button {
+	padding: 10px 10px;
+    font-size: 20;
+    border: 5px solid #fff;
+    font-family: 'Bowlby One SC', cursive;
+}
+
+.playerListItemContainer {
+	margin: 0px 3em;
+    border: 5px solid #fff;
+    display: block;
+    padding: 16px;
+}
+

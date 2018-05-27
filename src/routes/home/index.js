@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Layer2LibTester from './components/Layer2LibTester';
 import { injectRedux } from '../../components';
-import styles from './styles';
+// import styles from './styles';
+import './style.css';
 // import signup from './components/Signup';
 
 class Home extends Component {
@@ -14,7 +15,7 @@ class Home extends Component {
 
   render() {
     return (
-        <div>
+        <div className="layer2LobbyContainer">
           <Layer2LibTester history={this.props.history} />
         </div>
     );

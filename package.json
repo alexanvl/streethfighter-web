@@ -37,6 +37,7 @@
     "js-layer2lib": "github:layer2lib/js-layer2lib#firebase",
     "lodash": "^4.17.10",
     "matter-js": "^0.14.0",
+    "moment": "^2.22.1",
     "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
