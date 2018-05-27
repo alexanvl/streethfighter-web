@@ -1,16 +1,14 @@
+
 class Layer2LibClient {
 
-  constructor(myAccount, layer2lib, firebaseUpdate) {
+  constructor(myAccount, layer2lib, firebaseUpdate, web3) {
     this.myAccount = myAccount;
     this.layer2lib = layer2lib;
     this.firebaseUpdate = firebaseUpdate;
-  }
+    this.web3 = web3;
+    this.myBalance = web3.toWei(0.1, 'ether');
+    this.counterpartyBalace = web3.toWei(0.2, 'ether');
 
-  initLayer2 = _ => {
-    const myAccount = this.myAccount;
-    const myPrivateKey = privateKeys[myAccount];
-    this.layer2lib = this.props.layer2libActions.init(myPrivateKey, myAccount);
-    this.setState({ layer2Initialized: true, myAccount });
   }
 
   joinAgreement = async (agreement, state) => {
@@ -47,8 +45,8 @@ class Layer2LibClient {
       types: ['Ether'],
       partyA: myAccount, // Viewer or performer public key
       partyB: counterpartyAccount, // Spank Hub public key
-      balanceA: myBalance,
-      balanceB: counterpartyBalace
+      balanceA: this.myBalance,
+      balanceB: this.counterpartyBalace
     }
 
     let agreementId = myAgreement.ID + myAgreement.dbSalt
@@ -76,8 +74,8 @@ class Layer2LibClient {
       ID,
       agreementID: agreementId,
       type: 'ether',
-      balanceA: web3.toWei(0.03, 'ether'),
-      balanceB: web3.toWei(0.05, 'ether')
+      balanceA: this.web3.toWei(0.03, 'ether'),
+      balanceB: this.web3.toWei(0.05, 'ether')
     }
 
     await this.layer2lib.openGSCChannel(myChannel)
@@ -134,8 +132,8 @@ class Layer2LibClient {
 
     let updateState = {
       isClose: 0,
-      balanceA: web3.toWei(0.06, 'ether'),
-      balanceB: web3.toWei(0.02, 'ether')
+      balanceA: this.web3.toWei(0.06, 'ether'),
+      balanceB: this.web3.toWei(0.02, 'ether')
     }
 
     await this.layer2lib.gsc.initiateUpdateChannelState(channel.ID, updateState, false)
@@ -171,3 +169,5 @@ class Layer2LibClient {
   }
 
 }
+
+export default Layer2LibClient;

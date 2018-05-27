@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Layer2Lib from 'js-layer2lib';
 
 import Lobby from './Lobby';
+import Layer2LibClient from '../../../utils/Layer2LibClient';
 
 import { injectRedux } from '../../../components';
 
@@ -32,7 +33,7 @@ class Layer2LibTester extends Component {
     const myPrivateKey = privateKeys[myAccount];
     const layer2lib = this.props.layer2libActions.init(myPrivateKey, myAccount);
 
-    this.layer2libClient = new Layer2LibClient(myAccount, layer2lib, this.props.firebaseActions.update);
+    this.layer2libClient = new Layer2LibClient(myAccount, layer2lib, this.props.firebaseActions.update, web3);
 
     this.setState({ layer2Initialized: true, myAccount });
   }
