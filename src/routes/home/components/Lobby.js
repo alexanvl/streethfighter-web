@@ -34,11 +34,16 @@ class Lobby extends Component {
   render() {
     const { lobby = [], lastUpdate, proposal } = this.state;
     const { myAccount } = this.props;
-    const users = _.filter(lobby, player => player.timestamp > Date.now() - 10000);
+    const users = _.filter(lobby, player => {
+      const recent = player.timestamp > Date.now() - 10000;
+      const isMe = player.publicKey === myAccount;
+      return recent && !isMe;
+    });
     return <div>
       <h1>Lobby (You are {myAccount} and updated at {lastUpdate})</h1>
       {_.map(users, user => <div key={user.publicKey}>
         {user.publicKey}
+        <button onClick={_ => this.props.startAgreement(user.publicKey)}>Start Agreement</button>
       </div>)}
       <h1>Current Proposal</h1>
       {proposal && <div>
