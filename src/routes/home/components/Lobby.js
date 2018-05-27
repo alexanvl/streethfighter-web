@@ -16,7 +16,7 @@ class Lobby extends Component {
 
   updateProposal = proposal => {
     this.setState({ proposal });
-    if(proposal.agreement) {
+    if(proposal && proposal.agreement) {
       window.whichParty = (proposal.agreement.partyA === window.myAccount)? 'B' : 'A';
     }
   }
