@@ -1,5 +1,5 @@
 
-class Layer2LibClient {
+class Layer2libClient {
 
   constructor(myAccount, layer2lib, firebaseUpdate, web3) {
     this.myAccount = myAccount;
@@ -8,7 +8,6 @@ class Layer2LibClient {
     this.web3 = web3;
     this.myBalance = web3.toWei(0.1, 'ether');
     this.counterpartyBalace = web3.toWei(0.2, 'ether');
-
   }
 
   joinAgreement = async (agreement, state) => {
@@ -170,4 +169,4 @@ class Layer2LibClient {
 
 }
 
-export default Layer2LibClient;
+export default Layer2libClient;
