@@ -31,6 +31,7 @@ class Fight extends Component {
       75,
       85
     ]);
+    console.log(window.whichParty);
   }
 
   componentWillUnmount() {
@@ -51,7 +52,7 @@ class Fight extends Component {
           <World onInit={this.physicsInit}>
             <Character
               fighter={this.fighters[0].name}
-              isActive={true}
+              isActive={window.whichParty === 'A'}
               side="l"
               keys={this.KeyListener}
               health={this.fighters[0].health}
@@ -59,7 +60,7 @@ class Fight extends Component {
             />
             <Character
               fighter={this.fighters[1].name}
-              isActive={false}
+              isActive={window.whichParty === 'B'}
               side="r"
               keys={this.KeyListener}
               health={this.fighters[1].health}

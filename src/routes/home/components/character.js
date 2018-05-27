@@ -66,7 +66,7 @@ class Character extends Component {
   }
 
   makeMove = (fireMoves) => {
-    if(!this.turnAvailable || !fireMoves) {
+    if(!this.turnAvailable || !fireMoves || this.state.isActive) {
       return;
     }
     this.fireMoves = fireMoves.moves || '';

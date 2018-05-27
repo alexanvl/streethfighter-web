@@ -20,7 +20,7 @@ class Layer2libClient {
     myAgreement.dbSalt = this.myAccount
 
     await this.layer2lib.joinGSCAgreement(myAgreement, state)
-    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { event: 'updateAcceptedAgreement', agreement: myAgreement });
+    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { next: 'openChannel', event: 'updateAcceptedAgreement', agreement: myAgreement });
     console.log('Joined Agreement');
   }
 
@@ -58,7 +58,7 @@ class Layer2libClient {
     MyAgreementState = MyAgreementState[0]
 
     console.log('My agreement created and stored.. sending to other');
-    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { event: 'joinAgreement', state: MyAgreementState, agreement: myAgreement });
+    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { next: 'joinAgreement', event: 'joinAgreement', state: MyAgreementState, agreement: myAgreement });
   }
 
   openChannel = async agreement => {
@@ -82,7 +82,7 @@ class Layer2libClient {
 
     let My_chan = await this.layer2lib.gsc.getChannel(`${ID}${dbSalt}`)
     const My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}${dbSalt}`)
-    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan });
+    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { next: 'joinChannel', agreement: My_agreement, chan: My_chan });
     console.log('Opened Channel');
   }
 
@@ -103,7 +103,7 @@ class Layer2libClient {
 
     let My_chan = await this.layer2lib.gsc.getChannel(`${ID}${dbSalt}`)
     My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}${dbSalt}`)
-    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { chan: My_chan });
+    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { next: 'enterGame', chan: My_chan });
     console.log('Channel joined');
   }
 

@@ -10,14 +10,14 @@ import { injectRedux } from '../../../components';
 import { init } from '../../../store/actions/layer2lib';
 
 const privateKeys = {
-  '0x1e8524370B7cAf8dC62E3eFfBcA04cCc8e493FfE': '0x2c339e1afdbfd0b724a4793bf73ec3a4c235cceb131dcd60824a06cefbef9875',
-  '0x4c88305c5f9e4feb390e6ba73aaef4c64284b7bc': '0xaee55c1744171b2d3fedbbc885a615b190d3dd7e79d56e520a917a95f8a26579',
-  '0xd4EA3b21C312D7C6a1c744927a6F80Fe226A8416': '0x9eb0e84b7cadfcbbec8d49ae7112b25e0c1cb158ecd2160c301afa1f4a1029c8'
+  '0x47f5744364871e442967ef9624d0e5b6d867ad50': '0x6cb2b4257e4477b096beacc755b6abf45d9d67738522aa27d3c2e1444eb4ea80',
+  '0x52721196a9bfd4ecb2ecbec8122183f59cfdb201': '0x7d62b5a4caa26ff7833a37c1b0b3cf2ead49d9942f4ed940c54d9d70275b4591',
+  '0xd156363d387d6a7350f3f40d353eba7912cfacb7': '0x7942483b9ba28f92c2cb4014104c5629de7a41c56ebd832377ca3a4950459c2e'
 };
 
 const Web3 = require('web3')
 const web3 = new Web3()
-web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io'));
+web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
 
 const myBalance = web3.toWei(0.1, 'ether');
 const counterpartyBalace = web3.toWei(0.2, 'ether');
@@ -30,13 +30,17 @@ class Layer2LibTester extends Component {
 
   initLayer2 = _ => {
     const myAccount = this.refs.myAccountSelector.value;
-
+    window.myAccount = myAccount;
     const myPrivateKey = privateKeys[myAccount];
     const layer2lib = this.props.layer2libActions.init(myPrivateKey, myAccount);
 
     this.layer2libClient = new Layer2libClient(myAccount, layer2lib, this.props.firebaseActions.update, web3);
     GlobalLayer2Lib.client = this.layer2libClient;
     this.setState({ layer2Initialized: true, myAccount });
+  }
+
+  enterGame = _ => {
+    this.props.history.push('/fight');
   }
 
   render() {
@@ -64,6 +68,7 @@ class Layer2LibTester extends Component {
         sendUpdate={this.layer2libClient.sendUpdate}
         confirmUpdate={this.layer2libClient.confirmUpdate}
         updateConfirmedUpdate={this.layer2libClient.updateConfirmedUpdate}
+        enterGame={this.enterGame}
       />}
     </div>
   }
