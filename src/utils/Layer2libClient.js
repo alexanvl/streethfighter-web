@@ -64,6 +64,7 @@ class Layer2libClient {
     const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
 
     const ID = `channel_${myAccount}${counterpartyAccount}`;
+    console.log('openChannel', ID)
     const agreementId = agreement.ID;
     let myChannel = {
       ID,
@@ -88,12 +89,12 @@ class Layer2libClient {
 
     const ID = chan.ID;
     const agreementId = agreement.ID;
-
+console.log('joinChannel', ID)
     let myChan = JSON.parse(JSON.stringify(chan))
     let My_agreement = JSON.parse(JSON.stringify(agreement))
     await this.layer2lib.gsc.joinChannel(myChan, My_agreement, myChan.stateRaw)
 
-    let My_chan = await this.layer2lib.gsc.getChannel(`${ID}`)
+    let My_chan = await this.layer2lib.gsc.getChannel(`channel_${myAccount}${counterpartyAccount}`)
     My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}`)
     this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { next: 'enterGame', chan: My_chan });
     console.log('Channel joined');
