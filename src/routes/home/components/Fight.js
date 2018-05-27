@@ -43,7 +43,7 @@ class Fight extends Component {
     //   backgroundImage: "url('./src/assets/background.jpg') top center fixed"
     // };
     let stageStyle = {
-      background: "url('./src/assets/backgroundFight.jpg') top center fixed",
+      background: "url('/src/assets/backgroundFight.jpg') top center fixed",
     };
     return (
       <Loop>
