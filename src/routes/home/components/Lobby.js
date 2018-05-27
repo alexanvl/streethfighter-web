@@ -57,7 +57,7 @@ class Lobby extends Component {
       <h1>Join a game</h1>
       {proposal && <div>
         from: {proposal.agreement.partyA}
-        {proposal.agreement.openPending && <button onClick={_ => this.props.joinAgreement(proposal.agreement, proposal.state)}>Join Agreement</button>}
+        {proposal.agreement.openPending && <button onClick={_ => this.props.joinAgreement(proposal.agreement, proposal.state)}>Join Game</button>}
         {!proposal.agreement.openPending && <button onClick={_ => this.props.updateAcceptedAgreement(proposal.agreement)}>Update Agreement</button>}
         {!proposal.agreement.openPending && <button onClick={_ => this.props.openChannel(proposal.agreement)}>Open Channel</button>}
         {proposal.agreement && proposal.chan && <button onClick={_ => this.props.joinChannel(proposal.chan, proposal.agreement)}>Join Channel</button>}
