@@ -56,3 +56,8 @@ export function set(ref, data) {
 export function update(ref, data) {
   return firebase.database().ref(ref).update(data);
 }
+
+export function addToSet(ref, data) {
+  const key = firebase.database().ref(ref).push().key;
+  return set(`${ref}/${key}`, data);
+}

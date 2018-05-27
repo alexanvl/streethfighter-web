@@ -41,6 +41,9 @@ export default ({ dispatch, getState }) => {
       case actionTypes.firebase.UPDATE: {
         return Api.update(action.key, action.data);
       }
+      case actionTypes.firebase.ADD_TO_SET: {
+        return Api.addToSet(action.key, action.data);
+      }
       default:
         return next(action);
     }

@@ -7,6 +7,7 @@ const actions = {
   LISTEN_OFF: 'LISTEN_OFF',
   SET: 'SET',
   UPDATE: 'UPDATE',
+  ADD_TO_SET: 'ADD_TO_SET',
 };
 
 export function getUser() {
@@ -39,6 +40,10 @@ export function set(key, data) {
 
 export function update(key, data) {
   return { type: actions.UPDATE, key, data };
+}
+
+export function addToSet(key, data) {
+  return { type: actions.ADD_TO_SET, key, data };
 }
 
 export default actions;
