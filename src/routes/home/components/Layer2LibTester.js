@@ -3,6 +3,7 @@ import Layer2Lib from 'js-layer2lib';
 
 import Lobby from './Lobby';
 import Layer2libClient from '../../../utils/Layer2libClient';
+import GlobalLayer2Lib from '../../../utils/GlobalLayer2Lib';
 
 import { injectRedux } from '../../../components';
 
@@ -34,7 +35,7 @@ class Layer2LibTester extends Component {
     const layer2lib = this.props.layer2libActions.init(myPrivateKey, myAccount);
 
     this.layer2libClient = new Layer2libClient(myAccount, layer2lib, this.props.firebaseActions.update, web3);
-
+    GlobalLayer2Lib.client = this.layer2libClient;
     this.setState({ layer2Initialized: true, myAccount });
   }
 
@@ -61,6 +62,7 @@ class Layer2LibTester extends Component {
         confirmUpdate={this.layer2libClient.confirmUpdate}
         updateConfirmedUpdate={this.layer2libClient.updateConfirmedUpdate}
       />}
+      <a onClick={_ => this.props.history.push('/fight')}>hey</a>
     </div>
   }
 

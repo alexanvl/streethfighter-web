@@ -27,7 +27,7 @@ class Home extends Component {
         //   loop={true}
         // />
         <div>
-          <Layer2LibTester />
+          <Layer2LibTester history={this.props.history} />
         </div>
     );
   }

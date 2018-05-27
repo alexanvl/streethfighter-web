@@ -5,6 +5,7 @@ import Matter from 'matter-js';
 
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
 import Character from './character';
+import GlobalLayer2Lib from '../../../utils/GlobalLayer2Lib';
 
 import '../../../index.css';
 
@@ -21,7 +22,6 @@ class Fight extends Component {
     //     volume: 0.35,
     //   });
     // });
-
     this.KeyListener.subscribe([
       this.KeyListener.LEFT,
       this.KeyListener.RIGHT,
