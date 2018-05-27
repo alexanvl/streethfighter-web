@@ -89,7 +89,7 @@ export default class Character extends Component {
     return (
       <div>
         <div style={this.getWrapperStyles()}>
-          <HealthBar 
+          <HealthBar
             health={this.state.characterHealth}
           />
           <Body
@@ -102,7 +102,7 @@ export default class Character extends Component {
             <Sprite
               repeat={this.state.repeat}
               onPlayStateChanged={this.handlePlayStateChanged}
-              src={"./src/assets/fighter"+this.fighter+"_"+this.side+".png"}
+              src={"/src/images/fighter"+this.fighter+"_"+this.side+".png"}
               scale={this.context.scale}
               state={this.state.characterState}
               steps={[2, 2, 2, 2, 1, 2, 1]}
@@ -182,10 +182,6 @@ export default class Character extends Component {
   checkKeys(shouldMoveStageLeft, shouldMoveStageRight) {
     const { keys, store } = this.props;
     const { body } = this.body;
-<<<<<<< HEAD:src/routes/home/components/character.js
-    // console.log(keys);
-=======
->>>>>>> add health variable:src/routes/home/character.js
 
     let characterState = 2;
 
@@ -245,7 +241,7 @@ export default class Character extends Component {
     if (this.state.characterHealth == 0) {
       console.log("KO!");
       this.KO();
-      characterState = 6;
+      let characterState = 6;
       this.setState({
         characterState,
         repeat: true,

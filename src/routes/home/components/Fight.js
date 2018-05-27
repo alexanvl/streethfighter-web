@@ -6,6 +6,8 @@ import Matter from 'matter-js';
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
 import Character from './character';
 
+import '../../../index.css';
+
 class Fight extends Component {
   // static propTypes = {
   //   onLeave: PropTypes.func,
