@@ -42,14 +42,17 @@ class Layer2LibTester extends Component {
   render() {
     const { layer2Initialized, myAccount } = this.state;
     return <div>
-      {!layer2Initialized && <div><div>
+      <div style={{ marginBottom: "1em" }}>
+        <img src="src/images/logo.png" alt="Streeth Fighter" height="200" width="200" />
+      </div>
+      {!layer2Initialized && <div><div style={{marginBottom: "1em"}}>
         My Account: <select ref='myAccountSelector'>
           {web3.eth.accounts.slice(0,3).map(account => <option key={account}>
             {account}
           </option>)}
         </select>
       </div>
-      <button onClick={this.initLayer2}>initLayer2</button></div>}
+      <button onClick={this.initLayer2}>Select</button></div>}
 
       {layer2Initialized && <Lobby myAccount={this.state.myAccount}
         startAgreement={this.layer2libClient.startAgreement}
@@ -62,7 +65,6 @@ class Layer2LibTester extends Component {
         confirmUpdate={this.layer2libClient.confirmUpdate}
         updateConfirmedUpdate={this.layer2libClient.updateConfirmedUpdate}
       />}
-      <a onClick={_ => this.props.history.push('/fight')}>hey</a>
     </div>
   }
 

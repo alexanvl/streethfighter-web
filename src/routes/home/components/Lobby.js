@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 
 import { injectRedux } from '../../../components';
 
@@ -40,12 +41,20 @@ class Lobby extends Component {
       return recent && !isMe;
     });
     return <div>
-      <h1>Lobby (You are {myAccount} and updated at {lastUpdate})</h1>
-      {_.map(users, user => <div key={user.publicKey}>
-        {user.publicKey}
-        <button onClick={_ => this.props.startAgreement(user.publicKey)}>Start Agreement</button>
+      <h1>Lobby</h1>  
+      <p>(Last updated {moment(lastUpdate).fromNow()})</p>
+      <p style={{ marginBottom: "1em" }}>You are {myAccount}</p>
+      <h3>Currently in the lobby</h3>  
+      {_.map(users, user => <div key={user.publicKey}> 
+        <div className="playerListItemContainer">       
+          {user.publicKey}
+          <button style={{ float: "right", padding: "0 5px"}}
+            onClick={_ => this.props.startAgreement(user.publicKey)}>
+            Create a game
+          </button>
+        </div>
       </div>)}
-      <h1>Current Proposal</h1>
+      <h1>Join a game</h1>
       {proposal && <div>
         from: {proposal.agreement.partyA}
         {proposal.agreement.openPending && <button onClick={_ => this.props.joinAgreement(proposal.agreement, proposal.state)}>Join Agreement</button>}
