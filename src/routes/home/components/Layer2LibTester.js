@@ -33,24 +33,31 @@ class Layer2LibTester extends Component {
     this.setState({ layer2Initialized: true, myAccount });
   }
 
-  joinAgreement = async (counterPartyAgreement, CounterPartyAgreementState) => {
-    let myAgreement = JSON.parse(JSON.stringify(counterPartyAgreement))
+  joinAgreement = async (agreement, state) => {
+    console.log('Joining Agreement');
+    const myAccount = this.state.myAccount;
+    const counterpartyAccount = (agreement.partyA === myAccount)? agreement.partyB : agreement.partyA;
+
+    let myAgreement = JSON.parse(JSON.stringify(agreement))
     myAgreement.dbSalt = this.state.myAccount
 
-    await this.layer2lib.joinGSCAgreement(myAgreement, CounterPartyAgreementState)
+    await this.layer2lib.joinGSCAgreement(myAgreement, state)
     this.setState({
       myAgreement
     })
-    this.props.firebaseActions.update(`agreementProposal/${myAgreement.partyA}`, { agreement: myAgreement });
+    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { nonce: 1, event: 'updateAcceptedAgreement', agreement: myAgreement });
+    console.log('Joined Agreement');
   }
 
 
-  updateAcceptedAgreement = async updatedAgreement => {
-    const myAgreement = Object.assign({}, updatedAgreement, { dbSalt: this.state.myAccount});
+  updateAcceptedAgreement = async agreement => {
+    console.log('Updating Accepted Agreement');
+    const myAgreement = Object.assign({}, agreement, { dbSalt: this.state.myAccount});
     await this.layer2lib.gsc.updateAgreement(myAgreement);
     this.setState({
       myAgreement
     })
+    console.log('Updated Accepted Agreement');
   }
 
   startAgreement = async counterpartyAccount => {
@@ -75,7 +82,6 @@ class Layer2LibTester extends Component {
     await this.layer2lib.createGSCAgreement(myAgreement)
 
     let My_agreement = await this.layer2lib.getGSCAgreement(agreementId)
-    let My_tx = await this.layer2lib.gsc.getTransactions(agreementId)
     let MyAgreementState = await this.layer2lib.gsc.getStates(agreementId)
     MyAgreementState = MyAgreementState[0]
 
@@ -83,7 +89,7 @@ class Layer2LibTester extends Component {
     this.setState({
       myAgreement
     })
-    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { state: MyAgreementState, agreement: myAgreement});
+    this.props.firebaseActions.update(`agreementProposal/${counterpartyAccount}`, { nonce: 0, event: 'joinAgreement', state: MyAgreementState, agreement: myAgreement });
   }
 
   openChannel = async agreement => {
@@ -206,7 +212,7 @@ class Layer2LibTester extends Component {
       {layer2Initialized && <Lobby myAccount={this.state.myAccount}
         startAgreement={this.startAgreement}
         joinAgreement={this.joinAgreement}
-        updateAgreement={this.updateAcceptedAgreement}
+        updateAcceptedAgreement={this.updateAcceptedAgreement}
         openChannel={this.openChannel}
         joinChannel={this.joinChannel}
         updateAcceptedChannel={this.updateAcceptedChannel}

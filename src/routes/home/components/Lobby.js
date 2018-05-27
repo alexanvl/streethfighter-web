@@ -14,6 +14,12 @@ class Lobby extends Component {
   }
 
   updateProposal = proposal => {
+    proposal && console.log('Proposal received:' + proposal.nonce);
+    const firstProposal = !this.state.proposal && proposal;
+    const newProposal = this.state.proposal && this.state.proposal.nonce < proposal.nonce;
+    if (firstProposal || newProposal) {
+      this.props[proposal.event](proposal.agreement, proposal.state, proposal.channel);
+    }
     this.setState({ proposal });
   }
 
