@@ -9,7 +9,7 @@ import Signup from './components/Signup';
 
 const Web3 = require('web3')
 const web3 = new Web3()
-web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
+web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io'));
 
 class Home extends Component {
   constructor() {
@@ -22,7 +22,7 @@ class Home extends Component {
   render() {
     return (
         <div>
-            
+
         </div>
     );
   }
