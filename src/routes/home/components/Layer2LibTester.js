@@ -108,12 +108,8 @@ class Layer2LibTester extends Component {
       balanceB: web3.toWei(0.05, 'ether')
     }
 
-    console.log('start');
-
     await this.layer2lib.openGSCChannel(myChannel)
 
-    console.log('wait');
-    return;
     let My_chan = await this.layer2lib.gsc.getChannel(`${ID}${dbSalt}`)
     //console.log(Alice_chan)
     const My_agreement = await this.layer2lib.getGSCAgreement(`${agreementId}${dbSalt}`)
@@ -122,8 +118,7 @@ class Layer2LibTester extends Component {
     //console.log(AliceChanState)
     // const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreementId}${dbSalt}`)
     //console.log(AliceAgreementState)
-    this.props.firebaseActions.update(`agreementProposal/${My_agreement.partyA}`, { Agreement: My_agreement, chan: My_chan });
-    console.log('done');
+    this.props.firebaseActions.update(`agreementProposal/${My_agreement.partyB}`, { Agreement: My_agreement, chan: My_chan });
 
   }
 
@@ -133,7 +128,7 @@ class Layer2LibTester extends Component {
 
     const dbSalt = myAccount;
     const ID = `channel_${myAccount}${counterpartyAccount}`;
-    const agreementId = Agreement.id;
+    const agreementId = Agreement.ID;
 
     let myChan = JSON.parse(JSON.stringify(chan))
     myChan.dbSalt = dbSalt
