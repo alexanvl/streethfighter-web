@@ -7,8 +7,8 @@ class Layer2libClient {
     this.layer2lib = layer2lib;
     this.firebaseUpdate = firebaseUpdate;
     this.web3 = web3;
-    this.myBalance = web3.toWei(0.1, 'ether');
-    this.counterpartyBalace = web3.toWei(0.2, 'ether');
+    this.myBalance = web3.utils.toWei('0.1', 'ether');
+    this.counterpartyBalace = web3.utils.toWei('0.2', 'ether');
   }
 
   joinAgreement = async (agreement, state) => {
@@ -67,8 +67,8 @@ class Layer2libClient {
       ID,
       agreementID: agreementId,
       type: 'ether',
-      balanceA: this.web3.toWei(0.03, 'ether'),
-      balanceB: this.web3.toWei(0.05, 'ether')
+      balanceA: this.web3.utils.toWei('0.03', 'ether'),
+      balanceB: this.web3.utils.toWei('0.05', 'ether')
     }
 
     await this.layer2lib.openGSCChannel(myChannel)
@@ -118,8 +118,8 @@ console.log('joinChannel', ID)
 
     let updateState = {
       isClose: 0,
-      balanceA: this.web3.toWei(0.06, 'ether'),
-      balanceB: this.web3.toWei(0.02, 'ether')
+      balanceA: this.web3.utils.toWei('0.06', 'ether'),
+      balanceB: this.web3.utils.toWei('0.02', 'ether')
     }
 
     await this.layer2lib.gsc.initiateUpdateChannelState(channel.ID, updateState, false)

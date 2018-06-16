@@ -16,8 +16,8 @@ const Web3 = require('web3')
 const web3 = new Web3()
 web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io'));
 
-const myBalance = web3.toWei(0.1, 'ether');
-const counterpartyBalace = web3.toWei(0.2, 'ether');
+const myBalance = web3.utils.toWei('0.1', 'ether');
+const counterpartyBalace = web3.utils.toWei('0.2', 'ether');
 
 class Layer2LibTester extends Component {
   constructor(props, context) {
