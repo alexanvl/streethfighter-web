@@ -1,9 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { injectAuthRedirect, injectAuthRequired } from '../components';
-import styles from './styles';
 import Home from './home';
-import Fight from './home/components/Fight';
+import Fight from './fight';
 
 export default (props) => {
   return (

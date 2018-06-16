@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
-
 import Matter from 'matter-js';
-
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
-import Character from './character';
-import GlobalLayer2Lib from '../../../utils/GlobalLayer2Lib';
-
-import '../../../index.css';
+import Character from './components/character';
 
 class Fight extends Component {
   // static propTypes = {

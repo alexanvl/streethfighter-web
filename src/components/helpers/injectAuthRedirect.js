@@ -28,6 +28,6 @@ export default (InnerComponent, redirectTo = '/') => {
         return this.state.authCheck
           ? (<InnerComponent {...this.props} />) : (<div />);
       }
-    },
-  );
+    }
+  )
 }
