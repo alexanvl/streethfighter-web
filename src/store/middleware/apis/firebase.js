@@ -41,12 +41,12 @@ export function signOut() {
   return firebase.auth().signOut();
 }
 
-export function listenOn(ref, handler) {
-  return firebase.database().ref(ref).on('value', ss => handler(ss.val()))
+export function listenOn(ref, listener) {
+  return firebase.database().ref(ref).on('value', ss => listener(ss.val()))
 }
 
-export function listenOff(ref, listener) {
-  return firebase.database().ref(ref).off('value', listener);
+export function listenOff(ref) {
+  return firebase.database().ref(ref).off('value');
 }
 
 export function set(ref, data) {
@@ -57,6 +57,11 @@ export function update(ref, data) {
   return firebase.database().ref(ref).update(data);
 }
 
+export function remove(ref) {
+  return firebase.database().ref(ref).remove();
+}
+
+// TODO rename
 export function addToSet(ref, data) {
   const key = firebase.database().ref(ref).push().key;
   return set(`${ref}/${key}`, data);

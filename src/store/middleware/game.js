@@ -1,3 +1,4 @@
+import * as firebase from './apis/firebase';
 import bindActions, { actionTypes } from '../actions';
 
 const privateKeys = {
@@ -19,6 +20,80 @@ export default ({ dispatch, getState }) => {
         const privateKey = privateKeys[publicKey];
         actions.layer2libActions.init(publicKey, privateKey);
         action.account = publicKey;
+
+        return next(action);
+      }
+      case actionTypes.game.LISTEN_LOBBY_ON: {
+        const { account, lobbyInterval } = getState().gameReducer;
+
+        if (!lobbyInterval) {
+          action.lobbyInterval = setInterval(() => {
+            firebase.update(`lobby/${account}`, {
+              publicKey: account,
+              timestamp: Date.now()
+            });
+          }, 5000);
+        }
+
+        next(action);
+
+        return Promise.all([
+          firebase.listenOn('lobby', actions.gameActions.setLobby),
+          firebase.listenOn(
+            `agreementProposal/${account}`,
+            actions.gameActions.updateProposal
+          ),
+        ]);
+      }
+      case actionTypes.game.LISTEN_LOBBY_OFF: {
+        const { account, lobbyInterval } = getState().gameReducer;
+
+        if (lobbyInterval) {
+          clearInterval(lobbyInterval);
+        }
+
+        next(action);
+
+        return Promise.all([
+          firebase.listenOff('lobby'),
+          firebase.listenOff(
+            `agreementProposal/${account}`,
+            actions.gameActions.updateProposal
+          ),
+          firebase.remove(`lobby/${account}`)
+        ]);
+      }
+      case actionTypes.game.SET_LOBBY: {
+        const state = getState();
+        const { account } = getState().gameReducer;
+        const { lobby } = action;
+        const valid = [];
+        // filter lobby users
+        Object.keys(lobby).forEach(publicKey => {
+          const user = lobby[publicKey];
+
+          if (
+            user.publicKey !== state.gameReducer.account &&
+            user.timestamp > Date.now() - 10000
+          ) {
+            valid.push(user);
+          }
+        });
+
+        action.lobby = valid;
+
+        return next(action);
+      }
+      case actionTypes.game.UPDATE_PROPOSAL: {
+        const { account } = getState().gameReducer;
+        const { proposal } = action;
+
+        if (proposal && proposal.agreement) {
+          action.channelParty = (proposal.agreement.partyA === account) ?
+            'B' : 'A';
+        } else {
+          action.channelParty = '';
+        }
 
         return next(action);
       }
