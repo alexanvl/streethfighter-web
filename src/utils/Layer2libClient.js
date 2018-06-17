@@ -1,4 +1,3 @@
-import * as hubAPI from './hubAPI'
 
 class Layer2libClient {
 

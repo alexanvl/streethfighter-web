@@ -1,15 +1,15 @@
 import { actionTypes } from '../actions'
 
 const initialState = {
-  instance: null
+  account: null
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.layer2lib.INIT:
+    case actionTypes.game.SET_ACCOUNT:
       return {
         ...state,
-        instance: action.instance
+        account: action.account
       }
     default:
       return state;

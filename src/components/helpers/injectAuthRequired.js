@@ -1,27 +1,31 @@
 import React, { Component } from 'react';
-import { injectRedux } from '../lib';
+import injectRedux from '../lib/injectRedux';
 
 export default (InnerComponent) => {
   return injectRedux(
     class Wrapper extends Component {
-      constructor(props) {
-        super(props);
-
-        this.state = {
-          authed: false,
-        };
+      state = {
+        authed: false,
       }
 
-      setAuthed = (props) => {
-        const { firebaseActions, history, location: { pathname  } } = props;
+      setAuthed = props => {
+        // const { firebaseActions, history, location: { pathname  } } = props;
 
-        firebaseActions.getUser().then((user) => {
-          if (!user) {
-            history.replace('/login', { from: pathname });
-          } else {
-            this.setState({ authed: true });
-          }
-        });
+        // firebaseActions.getUser().then((user) => {
+        //   if (!user) {
+        //     history.replace('/login', { from: pathname });
+        //   } else {
+        //     this.setState({ authed: true });
+        //   }
+        // });
+        // for now just check account set
+        const { gameReducer: { account }, history } = props
+
+        if (!account) {
+          history.replace('/login');
+        } else {
+          this.setState({ authed: true });
+        }
       };
 
       componentWillMount() {

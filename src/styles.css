@@ -1,5 +1,32 @@
+@import url('https://fonts.googleapis.com/css?family=Bowlby+One+SC|Passion+One');
+
 body {
-    margin: 0;
+  background-color: black;
+  margin: 0;
+}
+
+select {
+  height: 50px;
+  font-size: 24px;
+}
+
+button {
+  padding: 10px 10px;
+  font-size: 20;
+  border: 5px solid orange;
+  font-family: 'Bowlby One SC', cursive;
+  background-color: orange;
+}
+
+.container {
+  /*border: 2px #ccc solid;*/
+  text-align: center;
+  height: 100%;
+  padding-top: 2.5em;
+  font-size: 2em;
+  color: #fff;
+  /*font-family: 'Bowlby One SC', cursive;*/
+  font-family: 'Passion One', cursive;
 }
 
 .balanceBar {
