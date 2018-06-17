@@ -1,6 +1,8 @@
 import * as firebase from './apis/firebase';
 import bindActions, { actionTypes } from '../actions';
 
+const LOBBY_INTERVAL = 5000;//ms
+const LOBBY_TIMEOUT = 10000;//ms
 const privateKeys = {
   '0x1e8524370B7cAf8dC62E3eFfBcA04cCc8e493FfE': '0x2c339e1afdbfd0b724a4793bf73ec3a4c235cceb131dcd60824a06cefbef9875',
   '0x4c88305c5f9e4feb390e6ba73aaef4c64284b7bc': '0xaee55c1744171b2d3fedbbc885a615b190d3dd7e79d56e520a917a95f8a26579',
@@ -32,7 +34,7 @@ export default ({ dispatch, getState }) => {
               publicKey: account,
               timestamp: Date.now()
             });
-          }, 5000);
+          }, LOBBY_INTERVAL);
         }
 
         next(action);
@@ -56,10 +58,7 @@ export default ({ dispatch, getState }) => {
 
         return Promise.all([
           firebase.listenOff('lobby'),
-          firebase.listenOff(
-            `agreementProposal/${account}`,
-            actions.gameActions.updateProposal
-          ),
+          firebase.listenOff(`agreementProposal/${account}`),
           firebase.remove(`lobby/${account}`)
         ]);
       }
@@ -73,7 +72,7 @@ export default ({ dispatch, getState }) => {
 
           if (
             user.publicKey !== account &&
-            user.timestamp > Date.now() - 10000
+            user.timestamp > Date.now() - LOBBY_TIMEOUT
           ) {
             valid.push(user);
           }
