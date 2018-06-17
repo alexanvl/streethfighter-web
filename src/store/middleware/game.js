@@ -64,16 +64,15 @@ export default ({ dispatch, getState }) => {
         ]);
       }
       case actionTypes.game.SET_LOBBY: {
-        const state = getState();
         const { account } = getState().gameReducer;
         const { lobby } = action;
         const valid = [];
         // filter lobby users
-        Object.keys(lobby).forEach(publicKey => {
+        Object.keys(lobby || {}).forEach(publicKey => {
           const user = lobby[publicKey];
 
           if (
-            user.publicKey !== state.gameReducer.account &&
+            user.publicKey !== account &&
             user.timestamp > Date.now() - 10000
           ) {
             valid.push(user);
