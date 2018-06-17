@@ -3,13 +3,16 @@ const actions = {
 };
 
 const initialState = {
+  instance: null
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case actions.INIT:
-      const newState = state;
-      return newState;
+      return {
+        ...state,
+        instance: action.instance
+      }
     default:
       return state;
   }

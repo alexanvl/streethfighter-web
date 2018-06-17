@@ -1,9 +1,6 @@
 import * as Layer2lib from 'js-layer2lib';
 import bindActions, { actionTypes } from '../actions';
-import firebase from './firebase/api';
-
-const Web3 = require('web3');
-const web3 = new Web3();
+import firebase from './apis/firebase';
 
 let layer2lib = null
 
@@ -24,7 +21,10 @@ export default ({ dispatch, getState }) => {
           layer2lib = new Layer2lib("https://rinkeby.infura.io", options);
           layer2lib.initGSC();
         }
-        return layer2lib;
+
+        action.instance = layer2lib;
+
+        return next(action);
       }
       default:
         return next(action);

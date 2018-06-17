@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Matter from 'matter-js';
-
 import { AudioPlayer, Body, Sprite } from 'react-game-kit';
+import injectRedux from '../../../components/lib/injectRedux';
 import HealthBar from './healthBar';
-import { injectRedux } from '../../../components';
 
 // @observer
 class Character extends Component {

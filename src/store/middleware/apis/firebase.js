@@ -1,15 +1,15 @@
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 
 let authCallback = null;
 
-firebase.initializeApp({
+export default firebase.initializeApp({
   apiKey: "AIzaSyCiDdsgg0bGEG4dUqJLgaF2R7VCJJH0NaI",
   authDomain: "ethba-hackathon.firebaseapp.com",
   databaseURL: "https://ethba-hackathon.firebaseio.com",
   projectId: "ethba-hackathon",
 });
-
-export default firebase;
 
 export function getUser() {
   if (!authCallback) {

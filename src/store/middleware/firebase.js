@@ -1,5 +1,5 @@
-import bindActions, { actionTypes } from '../../actions';
-import * as Api from './api';
+import bindActions, { actionTypes } from '../actions';
+import * as Api from './apis/firebase';
 
 
 export default ({ dispatch, getState }) => {

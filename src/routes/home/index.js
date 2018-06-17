@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import Layer2Lib from 'js-layer2lib';
-import Lobby from './components/Lobby';
 import Layer2libClient from '../../utils/Layer2libClient';
-import { injectRedux } from '../../components';
-import { init } from '../../store/actions/layer2lib';
+import injectRedux from '../../components/lib/injectRedux';
+import Lobby from './components/lobby';
+
 import './style.css';
 
 const privateKeys = {

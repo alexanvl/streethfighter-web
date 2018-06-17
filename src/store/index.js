@@ -1,9 +1,8 @@
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
+import firebaseMiddleware from './middleware/firebase';
+import layer2libMiddleware from './middleware/layer2lib';
 import rootReducer from './reducers';
-import {
-  firebaseMiddleware, layer2libMiddleware
-} from './middleware';
 
 export { rootReducer };
 export { default as bindActions, actionTypes } from './actions';
