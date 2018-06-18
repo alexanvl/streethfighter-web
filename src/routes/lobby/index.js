@@ -5,7 +5,8 @@ import './styles.css'
 export default injectRedux(
   class Lobby extends Component {
     state = {
-      showEnterGame: false
+      showEnterGame: false,
+      loading: false
     }
     componentDidMount() {
       this.props.gameActions.listenLobbyOn();
@@ -15,15 +16,12 @@ export default injectRedux(
       this.props.gameActions.listenLobbyOff();
     }
 
-    showEnterGame = _ => {
-      this.setState({showEnterGame:true})
-    }
-
     getLobbyRender = () => {
       const {
         gameReducer: { account, balances, lobby, proposal },
         layer2Actions
       } = this.props;
+      const { loading } = this.state;
       const balance = balances[account] || 0;
       let jsx = (<h3>Please deposit ETH to play</h3>);
 
@@ -32,15 +30,19 @@ export default injectRedux(
           <div key={user.publicKey}>
             <div className="playerListItemContainer">
               {user.publicKey} with {balances[user.publicKey]} ETH
+              {!loading &&
               <button
                 style={{ float: "right", padding: "0 5px" }}
-                onClick={_ => layer2Actions.createAgreement(
-                  user.publicKey,
-                  '0.01'
-                )}
+                onClick={() => {
+                  this.setState({ loading: true });
+                  layer2Actions.createAgreement(
+                    user.publicKey,
+                    '0.01'
+                  ).then(() => this.setState({ loading: false }))
+                }}
               >
                 Create a Game (0.01 ETH)
-              </button>
+              </button>}
             </div>
           </div>
         );
@@ -49,25 +51,34 @@ export default injectRedux(
           <div>
             <h3>Currently in the lobby:</h3>
             {lobbyUsers}
-            <h1>Join a game</h1>
+            {proposal && !loading && <h1>Game proposal</h1>}
+            {proposal && loading && <h1>Loading...</h1>}
             {proposal &&
               <div>
                 from: {proposal.agreement.partyA}
                 {proposal.next === 'joinAgreement' &&
                   proposal.agreement.openPending &&
+                  !loading &&
                 <button
-                  onClick={_ =>
-                    layer2Actions.joinAgreement(proposal.agreement, proposal.state[0])
-                  }
+                  onClick={() => {
+                    this.setState({ loading: true });
+                    layer2Actions.joinAgreement(
+                      proposal.agreement,
+                      proposal.state[0]
+                    ).then(() => this.setState({ loading: false }))
+                  }}
                 >
                   Join Game
                 </button>}
                 {proposal.next === 'openChannel' &&
                   !proposal.agreement.openPending &&
+                  !loading &&
                 <button
-                  onClick={_ =>
+                  onClick={() => {
+                    this.setState({ loading: true });
                     layer2Actions.openChannel(proposal.agreement, '0.01')
-                  }
+                      .then(() => this.setState({ loading: false }))
+                  }}
                 >
                   Open Channel
                 </button>}
@@ -75,10 +86,12 @@ export default injectRedux(
                   proposal.next === 'joinChannel' &&
                   proposal.agreement &&
                   proposal.channel &&
+                  !loading &&
                 <button
-                  onClick={_ => {
-                    this.showEnterGame();
+                onClick={() => {
+                    this.setState({ loading: true });
                     layer2Actions.joinChannel(proposal.channel, proposal.agreement)
+                      .then(() => this.setState({ loading: false, showEnterGame: true }))
                   }}
                 >
                   Join Channel
