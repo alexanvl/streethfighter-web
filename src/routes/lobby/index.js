@@ -30,19 +30,20 @@ export default injectRedux(
           <div key={user.publicKey}>
             <div className="playerListItemContainer">
               {user.publicKey} with {balances[user.publicKey]} ETH
-              {!loading &&
               <button
                 style={{ float: "right", padding: "0 5px" }}
                 onClick={() => {
-                  this.setState({ loading: true });
-                  layer2Actions.createAgreement(
-                    user.publicKey,
-                    '0.01'
-                  ).then(() => this.setState({ loading: false }))
+                  if (!loading && !proposal) {
+                    this.setState({ loading: true });
+                    layer2Actions.createAgreement(
+                      user.publicKey,
+                      '0.01'
+                    ).then(() => this.setState({ loading: false }))
+                  }
                 }}
               >
-                Create a Game (0.01 ETH)
-              </button>}
+                {loading || proposal ? 'Game Pending...' : 'Create a Game (0.01 ETH))'}
+              </button>
             </div>
           </div>
         );

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import './styles.css'
 
 export default class HealthBar extends Component {
   static propTypes = {
