@@ -3,6 +3,7 @@ import { actionTypes } from '../actions'
 const initialState = {
   account: null,
   lobby: [],
+  balances: {},
   proposal: null,
   channelParty: '',
   lobbyInterval: null,
@@ -39,6 +40,15 @@ export default (state = initialState, action) => {
         ...state,
         proposal: action.proposal,
         channelParty: action.channelParty
+      }
+    }
+    case actionTypes.game.SET_BALANCE: {
+      return {
+        ...state,
+        balances: {
+          ...state.balances,
+          [action.address]: action.balance
+        }
       }
     }
     default:

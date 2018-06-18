@@ -4,7 +4,8 @@ const actions = {
   LISTEN_LOBBY_ON: 'LISTEN_LOBBY_ON',
   LISTEN_LOBBY_OFF: 'LISTEN_LOBBY_OFF',
   SET_LOBBY: 'SET_LOBBY',
-  UPDATE_PROPOSAL: 'UPDATE_PROPOSAL'
+  UPDATE_PROPOSAL: 'UPDATE_PROPOSAL',
+  SET_BALANCE: 'SET_BALANCE'
 };
 
 export function getAccounts() {
@@ -29,6 +30,10 @@ export function setLobby(lobby) {
 
 export function updateProposal(proposal) {
   return { type: actions.UPDATE_PROPOSAL, proposal };
+}
+
+export function setBalance(address, balance) {
+  return { type: actions.SET_BALANCE, address, balance };
 }
 
 export default actions;

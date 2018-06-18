@@ -63,18 +63,25 @@ export default ({ dispatch, getState }) => {
         ]);
       }
       case actionTypes.game.SET_LOBBY: {
-        const { account } = getState().gameReducer;
+        const { account, balances } = getState().gameReducer;
         const { lobby } = action;
         const valid = [];
         // filter lobby users
         Object.keys(lobby || {}).forEach(publicKey => {
           const user = lobby[publicKey];
 
-          if (
-            user.publicKey !== account &&
-            user.timestamp > Date.now() - LOBBY_TIMEOUT
-          ) {
-            valid.push(user);
+          if (user.timestamp > Date.now() - LOBBY_TIMEOUT) {
+            // query balance if we don't have it
+            // TODO call this more frequently?
+            if (!balances.hasOwnProperty(publicKey)) {
+              actions.layer2Actions.getBalance(publicKey)
+                .then(balance =>
+                  actions.gameActions.setBalance(publicKey, balance)
+                )
+            } else if (balances[publicKey] > 0 && publicKey !== account) {
+              // add users who are not ourself to the lobby
+              valid.push(user);
+            }
           }
         });
 
@@ -86,11 +93,11 @@ export default ({ dispatch, getState }) => {
         const { account } = getState().gameReducer;
         const { proposal } = action;
 
-        if (proposal && proposal.agreement) {
-          action.channelParty = (proposal.agreement.partyA === account) ?
-            'B' : 'A';
-        } else {
-          action.channelParty = '';
+        if (
+          proposal &&
+          proposal.agreement
+         ) {
+          actions.layer2Actions.updateAgreement(proposal.agreement);
         }
 
         return next(action);
