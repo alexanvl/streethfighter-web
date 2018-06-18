@@ -59,7 +59,7 @@ export default ({ dispatch, getState }) => {
         return Promise.all([
           firebase.listenOff('lobby'),
           firebase.listenOff(`agreementProposal/${account}`),
-          firebase.remove(`lobby/${account}`)
+          firebase.remove(`lobby/${account}`),
         ]);
       }
       case actionTypes.game.SET_LOBBY: {

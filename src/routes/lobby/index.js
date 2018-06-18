@@ -10,6 +10,9 @@ export default injectRedux(
     }
     componentDidMount() {
       this.props.gameActions.listenLobbyOn();
+      window.onbeforeunload = () => {
+        this.props.gameActions.listenLobbyOff();
+      };
     }
 
     componentWillUnmount() {
