@@ -1,15 +1,17 @@
 import { actionTypes } from '../actions'
 
 const initialState = {
-  instance: null
+  layer2lib: null,
+  web3: null
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.layer2lib.INIT:
+    case actionTypes.layer2.INIT:
       return {
         ...state,
-        instance: action.instance
+        layer2lib: action.layer2lib,
+        web3: action.web3
       }
     default:
       return state;

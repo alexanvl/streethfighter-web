@@ -1,8 +1,8 @@
 import * as firebase from './apis/firebase';
 import bindActions, { actionTypes } from '../actions';
 
-const LOBBY_INTERVAL = 5000;//ms
-const LOBBY_TIMEOUT = 10000;//ms
+const LOBBY_INTERVAL = 2000;//ms
+const LOBBY_TIMEOUT = 4000;//ms
 const privateKeys = {
   '0x1e8524370B7cAf8dC62E3eFfBcA04cCc8e493FfE': '0x2c339e1afdbfd0b724a4793bf73ec3a4c235cceb131dcd60824a06cefbef9875',
   '0x4c88305c5f9e4feb390e6ba73aaef4c64284b7bc': '0xaee55c1744171b2d3fedbbc885a615b190d3dd7e79d56e520a917a95f8a26579',
@@ -20,7 +20,7 @@ export default ({ dispatch, getState }) => {
       case actionTypes.game.SET_ACCOUNT: {
         const { publicKey } = action;
         const privateKey = privateKeys[publicKey];
-        actions.layer2libActions.init(publicKey, privateKey);
+        actions.layer2Actions.init(publicKey, privateKey);
         action.account = publicKey;
 
         return next(action);

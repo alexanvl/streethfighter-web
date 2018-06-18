@@ -1,13 +1,13 @@
 import { bindActionCreators } from 'redux';
 import firebase, * as firebaseActions from './firebase';
 import game, * as gameActions from './game';
-import layer2lib, * as layer2libActions from './layer2lib';
+import layer2, * as layer2Actions from './layer2';
 
 // allow middleware and reducers to import specific action constants from this index
 export const actionTypes = {
   firebase,
   game,
-  layer2lib,
+  layer2,
 };
 
 // by default, export a function to map all actions bound to dispatch
@@ -16,6 +16,6 @@ export default (dispatch) => {
   return {
     firebaseActions: bindActionCreators({ ...firebaseActions }, dispatch),
     gameActions: bindActionCreators({ ...gameActions }, dispatch),
-    layer2libActions: bindActionCreators({ ...layer2libActions }, dispatch),
+    layer2Actions: bindActionCreators({ ...layer2Actions }, dispatch),
   };
 }
