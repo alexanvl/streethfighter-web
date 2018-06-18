@@ -57,7 +57,7 @@ export default injectRedux(
                   proposal.agreement.openPending &&
                 <button
                   onClick={_ =>
-                    layer2Actions.joinAgreement(proposal.agreement, proposal.state)
+                    layer2Actions.joinAgreement(proposal.agreement, proposal.state[0])
                   }
                 >
                   Join Game
