@@ -2,7 +2,7 @@ import * as Layer2lib from 'js-layer2lib';
 import Web3 from 'web3';
 import config from '../../config';
 import bindActions, { actionTypes } from '../actions';
-import firebase, * as db from './apis/firebase';
+import firebase from './apis/firebase';
 
 export default ({ dispatch, getState }) => {
   const actions = bindActions(dispatch);
@@ -66,13 +66,9 @@ export default ({ dispatch, getState }) => {
 
         return layer2lib.createGSCAgreement(agreement)
           .then(() => layer2lib.gsc.getStates(agreement.ID))
-          // TODO these could be handled in game logic by dispatching another action
-          // handle inline for now
-          .then(state => db.update(`agreementProposal/${partyB}`, {
-            next: 'joinAgreement',
-            state,
-            agreement
-          }));
+          .then(state =>
+            actions.layer2Actions.agreementCreated(partyB, agreement, state)
+          );
       }
       case actionTypes.layer2.UPDATE_AGREEMENT: {
         const { layer2lib } = getState().layer2Reducer;
@@ -83,23 +79,21 @@ export default ({ dispatch, getState }) => {
       case actionTypes.layer2.JOIN_AGREEMENT: {
         const { layer2lib, publicKey } = getState().layer2Reducer;
         const { agreement, state } = action;
-        const counterpartyAccount = (agreement.partyA === publicKey) ?
+        const counterparty = (agreement.partyA === publicKey) ?
           agreement.partyB : agreement.partyA;
 
         return layer2lib.joinGSCAgreement(agreement, state)
-          .then(() => db.update(`agreementProposal/${counterpartyAccount}`, {
-            next: 'openChannel',
-            state,
-            agreement
-          }))
+          .then(() => actions.layer2Actions
+            .agreementjoined(counterparty, agreement, state)
+          )
       }
       case actionTypes.layer2.OPEN_CHANNEL: {
         const { layer2lib, publicKey, web3 } = getState().layer2Reducer;
         const { agreement, amount } = action;
-        const counterpartyAccount = (agreement.partyA === publicKey) ?
+        const counterparty = (agreement.partyA === publicKey) ?
           agreement.partyB : agreement.partyA;
         const channel = {
-          ID: `channel_${publicKey}${counterpartyAccount}`,
+          ID: `channel_${publicKey}${counterparty}`,
           agreementID: agreement.ID,
           type: 'ether',
           balanceA: web3.utils.toWei(amount, 'ether'),
@@ -107,24 +101,20 @@ export default ({ dispatch, getState }) => {
         };
 
         return layer2lib.openGSCChannel(channel)
-          .then(() => db.update(`agreementProposal/${counterpartyAccount}`, {
-            next: 'joinChannel',
-            agreement,
-            channel
-          }))
+          .then(() => actions.layer2Actions
+            .channelOpened(counterparty, agreement, channel)
+          )
       }
       case actionTypes.layer2.JOIN_CHANNEL: {
         const { layer2lib, publicKey } = getState().layer2Reducer;
         const { agreement, channel } = action;
-        const counterpartyAccount = (agreement.partyA === publicKey) ?
+        const counterparty = (agreement.partyA === publicKey) ?
           agreement.partyB : agreement.partyA;
 
         return layer2lib.gsc.joinChannel(channel, agreement, channel.stateRaw)
-          .then(() => db.update(`agreementProposal/${counterpartyAccount}`, {
-            next: 'enterGame',
-            agreement,
-            channel
-          }))
+          .then(() => actions.layer2Actions
+            .channelJoined(counterparty, agreement, channel)
+          )
       }
       default:
         return next(action);

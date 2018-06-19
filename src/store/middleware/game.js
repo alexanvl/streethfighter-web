@@ -1,6 +1,6 @@
-import * as firebase from './apis/firebase';
 import config from '../../config'
 import bindActions, { actionTypes } from '../actions';
+import * as db from './apis/firebase';
 
 const LOBBY_INTERVAL = 5000;//ms
 const LOBBY_TIMEOUT = 10000;//ms
@@ -28,7 +28,7 @@ export default ({ dispatch, getState }) => {
 
         if (!lobbyInterval) {
           action.lobbyInterval = setInterval(() => {
-            firebase.update(`lobby/${account}`, {
+            db.update(`lobby/${account}`, {
               publicKey: account,
               timestamp: Date.now()
             });
@@ -38,9 +38,9 @@ export default ({ dispatch, getState }) => {
         next(action);
 
         return Promise.all([
-          firebase.listenOn('lobby', actions.gameActions.setLobby),
-          firebase.listenOn(
-            `agreementProposal/${account}`,
+          db.listenOn('lobby', actions.gameActions.setLobby),
+          db.listenOn(
+            `game_proposals/${account}`,
             actions.gameActions.updateProposal
           ),
         ]);
@@ -55,9 +55,9 @@ export default ({ dispatch, getState }) => {
         next(action);
 
         return Promise.all([
-          firebase.listenOff('lobby'),
-          firebase.listenOff(`agreementProposal/${account}`),
-          firebase.remove(`lobby/${account}`),
+          db.listenOff('lobby'),
+          db.listenOff(`game_proposals/${account}`),
+          db.remove(`lobby/${account}`),
         ]);
       }
       case actionTypes.game.SET_LOBBY: {
@@ -88,7 +88,6 @@ export default ({ dispatch, getState }) => {
         return next(action);
       }
       case actionTypes.game.UPDATE_PROPOSAL: {
-        const { account } = getState().gameReducer;
         const { proposal } = action;
 
         if (
@@ -99,6 +98,74 @@ export default ({ dispatch, getState }) => {
         }
 
         return next(action);
+      }
+      case actionTypes.layer2.AGREEMENT_CREATED: {
+        const { account } = getState().gameReducer;
+        const { partyB, agreement, state } = action;
+
+        return db.update('game_proposals', {
+          [account]: {
+            next: 'agreementCreated',
+            state,
+            agreement
+          },
+          [partyB]: {
+            next: 'joinAgreement',
+            state,
+            agreement
+          }
+        });
+      }
+      case actionTypes.layer2.AGREEMENT_JOINED: {
+        const { account } = getState().gameReducer;
+        const { counterparty, agreement, state } = action;
+
+        return db.update('game_proposals', {
+          [account]: {
+            next: 'agreementJoined',
+            state,
+            agreement
+          },
+          [counterparty]: {
+            next: 'openChannel',
+            state,
+            agreement
+          }
+        });
+      }
+      case actionTypes.layer2.CHANNEL_OPENED: {
+        const { account } = getState().gameReducer;
+        const { counterparty, agreement, channel } = action;
+
+        return db.update('game_proposals', {
+          [account]: {
+            next: 'channelOpened',
+            agreement,
+            channel
+          },
+          [counterparty]: {
+            next: 'joinChannel',
+            agreement,
+            channel
+          }
+        });
+      }
+      case actionTypes.layer2.CHANNEL_JOINED: {
+        const { account } = getState().gameReducer;
+        const { counterparty, agreement, channel } = action;
+
+        return db.update('game_proposals', {
+          [account]: {
+            next: 'enterGame',
+            agreement,
+            channel
+          },
+          [counterparty]: {
+            next: 'enterGame',
+            agreement,
+            channel
+          }
+        });
       }
       default:
         return next(action);

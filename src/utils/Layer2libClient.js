@@ -34,7 +34,7 @@ class Layer2libClient {
     const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreement.ID}`)
 
     console.log('Sending channel state update to counterparty')
-    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan, updateState });
+    this.firebaseUpdate(`game_proposals/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan, updateState });
   }
 
   confirmUpdate = async (channel, agreement, updateState) => {
@@ -52,7 +52,7 @@ class Layer2libClient {
     const MyAgreementState = await this.layer2lib.gsc.getStates(`${agreement.ID}`)
 
     console.log('You confirmed channel state update, sending ack to counterparty')
-    this.firebaseUpdate(`agreementProposal/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan, updateState });
+    this.firebaseUpdate(`game_proposals/${counterpartyAccount}`, { agreement: My_agreement, chan: My_chan, updateState });
   }
 
 }
