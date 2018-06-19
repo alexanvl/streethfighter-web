@@ -1,6 +1,6 @@
 import * as Layer2lib from 'js-layer2lib';
 import Web3 from 'web3';
-import { WEB3_URL } from '../../config';
+import config from '../../config';
 import bindActions, { actionTypes } from '../actions';
 import firebase, * as db from './apis/firebase';
 
@@ -31,13 +31,13 @@ export default ({ dispatch, getState }) => {
             privateKey: action.privateKey
           }
 
-          layer2lib = new Layer2lib(WEB3_URL, options);
+          layer2lib = new Layer2lib(config.WEB3_URL, options);
           layer2lib.initGSC();
         }
 
         if (!web3) {
           web3 = new Web3();
-          web3.setProvider(new web3.providers.HttpProvider(WEB3_URL));
+          web3.setProvider(new web3.providers.HttpProvider(config.WEB3_URL));
         }
 
         action.layer2lib = layer2lib;
