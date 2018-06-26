@@ -7,6 +7,7 @@ const initialState = {
   proposal: null,
   channelParty: '',
   lobbyInterval: null,
+  gameState: {},
 };
 
 export default (state = initialState, action) => {
@@ -38,8 +39,8 @@ export default (state = initialState, action) => {
     case actionTypes.game.UPDATE_PROPOSAL: {
       return {
         ...state,
-        proposal: action.proposal,
-        channelParty: action.channelParty
+        proposal: { ...action.proposal },
+        channelParty: action.channelParty || state.channelParty
       }
     }
     case actionTypes.game.SET_BALANCE: {
@@ -49,6 +50,20 @@ export default (state = initialState, action) => {
           ...state.balances,
           [action.address]: action.balance
         }
+      }
+    }
+    case actionTypes.game.HANDLE_GAME_STATE: {
+      return {
+        ...state,
+        gameState: {
+          ...action.gameState
+        }
+      }
+    }
+    case actionTypes.game.LISTEN_GAME_OFF: {
+      return {
+        ...state,
+        gameState: { }
       }
     }
     default:

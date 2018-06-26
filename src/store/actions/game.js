@@ -5,7 +5,10 @@ const actions = {
   LISTEN_LOBBY_OFF: 'LISTEN_LOBBY_OFF',
   SET_LOBBY: 'SET_LOBBY',
   UPDATE_PROPOSAL: 'UPDATE_PROPOSAL',
-  SET_BALANCE: 'SET_BALANCE'
+  SET_BALANCE: 'SET_BALANCE',
+  LISTEN_GAME_ON: 'LISTEN_GAME_ON',
+  LISTEN_GAME_OFF: 'LISTEN_GAME_OFF',
+  HANDLE_GAME_STATE: 'HANDLE_GAME_STATE',
 };
 
 export function getAccounts() {
@@ -34,6 +37,18 @@ export function updateProposal(proposal) {
 
 export function setBalance(address, balance) {
   return { type: actions.SET_BALANCE, address, balance };
+}
+
+export function listenGameOn() {
+  return { type: actions.LISTEN_GAME_ON };
+}
+
+export function listenGameOff() {
+  return { type: actions.LISTEN_GAME_OFF };
+}
+
+export function handleGameState(gameState) {
+  return { type: actions.HANDLE_GAME_STATE, gameState };
 }
 
 export default actions;

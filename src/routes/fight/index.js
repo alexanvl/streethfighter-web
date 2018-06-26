@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
 import Matter from 'matter-js';
 import { AudioPlayer, Loop, Stage, KeyListener, World } from 'react-game-kit';
+import config from '../../config';
 import Character from './components/character';
 
+const GAME_DATA = config.GAME_DATA;
+
 class Fight extends Component {
-  // static propTypes = {
-  //   onLeave: PropTypes.func,
-  // };
+  constructor(props) {
+    super(props);
+
+    this.keyListener = new KeyListener();
+    // this.fighters = [
+    //   { name: 'Vitalik', health: 2000 },
+    //   { name: 'Satoshi', health: 2000 }
+    // ];
+  }
 
   componentDidMount() {
     // this.player = new AudioPlayer('/assets/music.wav', () => {
@@ -16,16 +25,15 @@ class Fight extends Component {
     //     volume: 0.35,
     //   });
     // });
-    this.KeyListener.subscribe([
-      this.KeyListener.LEFT,
-      this.KeyListener.RIGHT,
-      this.KeyListener.UP,
-      this.KeyListener.SPACE,
-      80,
-      75,
-      85
+    this.keyListener.subscribe([
+      // this.keyListener.LEFT,
+      // this.keyListener.RIGHT,
+      // this.keyListener.UP,
+      // this.keyListener.SPACE,
+      GAME_DATA.keys.punch,
+      GAME_DATA.keys.kick,
+      GAME_DATA.keys.super,
     ]);
-    console.log(window.whichParty);
   }
 
   componentWillUnmount() {
@@ -34,10 +42,8 @@ class Fight extends Component {
   }
 
   render() {
-    // const bgStyles = {
-    //   backgroundImage: "url('./src/assets/background.jpg') top center fixed"
-    // };
-    let stageStyle = {
+    const { gameReducer: { gameState, channelParty } } = this.props;
+    const stageStyle = {
       background: "url('/src/assets/backgroundFight.jpg') top center fixed",
     };
     return (
@@ -45,20 +51,18 @@ class Fight extends Component {
         <Stage style={ stageStyle }>
           <World onInit={this.physicsInit}>
             <Character
-              fighter={this.fighters[0].name}
-              isActive={window.whichParty === 'A'}
+              fighter={GAME_DATA.fighters[0].name}
+              isActive={channelParty === 'A'}
               side="l"
-              keys={this.KeyListener}
-              health={this.fighters[0].health}
-              fireChannel={'makeMoveA'}
+              keys={this.keyListener}
+              health={gameState.healthA || GAME_DATA.initialGameState.startHealth}
             />
             <Character
-              fighter={this.fighters[1].name}
-              isActive={window.whichParty === 'B'}
+              fighter={GAME_DATA.fighters[1].name}
+              isActive={channelParty === 'B'}
               side="r"
-              keys={this.KeyListener}
-              health={this.fighters[1].health}
-              fireChannel={'makeMoveB'}
+              keys={this.keyListener}
+              health={gameState.healthB || GAME_DATA.initialGameState.startHealth}
             />
           </World>
         </Stage>
@@ -83,20 +87,6 @@ class Fight extends Component {
     Matter.World.addBody(engine.world, leftWall);
     Matter.World.addBody(engine.world, rightWall);
   };
-
-  constructor(props) {
-    super(props);
-    this.KeyListener = new KeyListener();
-    let V = {
-      name: 'Vitalik',
-      health: 2000
-    }
-    let S = {
-      name: 'Satoshi',
-      health: 2000
-    }
-    this.fighters = [V, S];
-  }
 }
 
 export default Fight;

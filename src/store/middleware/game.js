@@ -2,9 +2,9 @@ import config from '../../config'
 import bindActions, { actionTypes } from '../actions';
 import * as db from './apis/firebase';
 
+const GAME_DATA = config.GAME_DATA;
 const LOBBY_INTERVAL = 5000;//ms
 const LOBBY_TIMEOUT = 10000;//ms
-
 
 export default ({ dispatch, getState }) => {
   const actions = bindActions(dispatch);
@@ -88,6 +88,7 @@ export default ({ dispatch, getState }) => {
         return next(action);
       }
       case actionTypes.game.UPDATE_PROPOSAL: {
+        const { account } = getState().gameReducer;
         const { proposal } = action;
 
         if (
@@ -95,6 +96,7 @@ export default ({ dispatch, getState }) => {
           proposal.agreement
          ) {
           actions.layer2Actions.updateAgreement(proposal.agreement);
+          action.channelParty = proposal.agreement.partyA === account ? 'A' : 'B'
         }
 
         return next(action);
@@ -166,6 +168,59 @@ export default ({ dispatch, getState }) => {
             channel
           }
         });
+      }
+      case actionTypes.game.LISTEN_GAME_ON: {
+        const {
+          channelParty,
+          proposal: {
+            agreement: {
+              partyA,
+              partyB
+            }
+          },
+        } = getState().gameReducer;
+
+        return Promise.all([
+          db.set(`game_states/${partyA}${partyB}`, GAME_DATA.initialGameState),
+          db.listenOn(
+            `game_states/${partyA}${partyB}`,
+            actions.gameActions.handleGameState
+          )
+        ]);
+      }
+      case actionTypes.game.LISTEN_GAME_OFF: {
+        const {
+          proposal: {
+            agreement: {
+              partyA,
+              partyB
+            }
+          }
+        } = getState().gameReducer;
+
+        next(action);
+
+        return db.listenOff(`game_states/${partyA}${partyB}`);
+      }
+      case actionTypes.game.HANDLE_GAME_STATE: {
+        const {
+          channelParty,
+          gameState: currGameState
+        } = getState().gameReducer;
+        let { gameState: nextGameState } = action;
+        console.log('current game state', currGameState);
+        console.log('next game state', nextGameState);
+        // do some logic
+        if (nextGameState) {
+          nextGameState.isMyTurn = nextGameState.turn === channelParty;
+        } else {
+          // initialize local copy and set player turn
+          nextGameState = {
+            ...GAME_DATA.initialGameState,
+            isMyTurn: channelParty === 'B',
+          };
+        }
+        return next(action);
       }
       default:
         return next(action);
