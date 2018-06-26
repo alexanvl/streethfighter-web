@@ -215,13 +215,12 @@ export default ({ dispatch, getState }) => {
 
         next(action)
 
-        return db.update(`game_states/${updateKey}`, {
+        const updates = {
           turn: partyKey,
-          [channelParty]: {
-            ...gameState[channelParty],
-            playerState: action.playerState
-          }
-        })
+          [`${channelParty}/playerState`]: action.playerState,
+        }
+
+        return db.update(`game_states/${updateKey}`, updates)
       }
       default:
         return next(action)

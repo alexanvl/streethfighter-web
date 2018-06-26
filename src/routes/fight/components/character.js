@@ -32,30 +32,35 @@ export default injectRedux(
           x: props.fighter === 'A' ? 0 : 400,
           y: 20
         },
+        settingState: false
         //characterHealth: props.health,
       }
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-      const { fighter, gameReducer: { gameState }, isActive } = nextProps
+    // static getDerivedStateFromProps(nextProps, prevState) {
+    //   const { fighter, gameReducer: { gameState }, isActive } = nextProps
 
-      if (gameState[fighter] && !isActive) {
-        const playerState = gameState[fighter].playerState
+    //   if (gameState[fighter] && !isActive) {
+    //     const playerState = gameState[fighter].playerState
 
-        if (prevState.playerState !== playerState) {
-          const nextState = {
-            ...GAME_DATA.playerStates[playerState],
-            playerState,
-          }
-          return nextState
-        }
-      }
+    //     if (prevState.playerState !== playerState && !prevState.settingState) {
+    //       return {
+    //         ...GAME_DATA.playerStates[playerState],
+    //         playerState,
+    //         settingState: true
+    //       }
+    //     } else {
+    //       return {
+    //         settingState: false
+    //       }
+    //     }
+    //   }
 
-      return null
-    }
+    //   return null
+    // }
 
     componentDidMount() {
-      // this.jumpNoise = new AudioPlayer('/assets/jump.wav')
+     this.jumpNoise = new AudioPlayer('/assets/jump.wav')
       // Start update loop
       Matter.Events.on(this.context.engine, 'afterUpdate', this.update)
       //this.props.firebaseActions.listenOn(this.props.fireChannel, this.makeMove)
