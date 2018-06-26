@@ -1,41 +1,41 @@
 import config from '../../config'
-import bindActions, { actionTypes } from '../actions';
-import * as db from './apis/firebase';
+import bindActions, { actionTypes } from '../actions'
+import * as db from './apis/firebase'
 
-const GAME_DATA = config.GAME_DATA;
-const LOBBY_INTERVAL = 5000;//ms
-const LOBBY_TIMEOUT = 10000;//ms
+const GAME_DATA = config.GAME_DATA
+const LOBBY_INTERVAL = 5000//ms
+const LOBBY_TIMEOUT = 10000//ms
 
 export default ({ dispatch, getState }) => {
-  const actions = bindActions(dispatch);
+  const actions = bindActions(dispatch)
 
   return next => (action) => {
     switch (action.type) {
       case actionTypes.game.GET_ACCOUNTS: {
         // TODO accounts
-        return Object.keys(config.PRIVATE_KEYS);
+        return Object.keys(config.PRIVATE_KEYS)
       }
       case actionTypes.game.SET_ACCOUNT: {
-        const { publicKey } = action;
-        const privateKey = config.PRIVATE_KEYS[publicKey];
-        actions.layer2Actions.init(publicKey, privateKey);
-        action.account = publicKey;
+        const { publicKey } = action
+        const privateKey = config.PRIVATE_KEYS[publicKey]
+        actions.layer2Actions.init(publicKey, privateKey)
+        action.account = publicKey
 
-        return next(action);
+        return next(action)
       }
       case actionTypes.game.LISTEN_LOBBY_ON: {
-        const { account, lobbyInterval } = getState().gameReducer;
+        const { account, lobbyInterval } = getState().gameReducer
 
         if (!lobbyInterval) {
           action.lobbyInterval = setInterval(() => {
             db.update(`lobby/${account}`, {
               publicKey: account,
               timestamp: Date.now()
-            });
-          }, LOBBY_INTERVAL);
+            })
+          }, LOBBY_INTERVAL)
         }
 
-        next(action);
+        next(action)
 
         return Promise.all([
           db.listenOn('lobby', actions.gameActions.setLobby),
@@ -43,30 +43,30 @@ export default ({ dispatch, getState }) => {
             `game_proposals/${account}`,
             actions.gameActions.updateProposal
           ),
-        ]);
+        ])
       }
       case actionTypes.game.LISTEN_LOBBY_OFF: {
-        const { account, lobbyInterval } = getState().gameReducer;
+        const { account, lobbyInterval } = getState().gameReducer
 
         if (lobbyInterval) {
-          clearInterval(lobbyInterval);
+          clearInterval(lobbyInterval)
         }
 
-        next(action);
+        next(action)
 
         return Promise.all([
           db.listenOff('lobby'),
           db.listenOff(`game_proposals/${account}`),
           db.remove(`lobby/${account}`),
-        ]);
+        ])
       }
       case actionTypes.game.SET_LOBBY: {
-        const { account, balances } = getState().gameReducer;
-        const { lobby } = action;
-        const valid = [];
+        const { account, balances } = getState().gameReducer
+        const { lobby } = action
+        const valid = []
         // filter lobby users
         Object.keys(lobby || {}).forEach(publicKey => {
-          const user = lobby[publicKey];
+          const user = lobby[publicKey]
 
           if (user.timestamp > Date.now() - LOBBY_TIMEOUT) {
             // query balance if we don't have it
@@ -78,32 +78,32 @@ export default ({ dispatch, getState }) => {
                 )
             } else if (balances[publicKey] > 0 && publicKey !== account) {
               // add users who are not ourself to the lobby
-              valid.push(user);
+              valid.push(user)
             }
           }
-        });
+        })
 
-        action.lobby = valid;
+        action.lobby = valid
 
-        return next(action);
+        return next(action)
       }
       case actionTypes.game.UPDATE_PROPOSAL: {
-        const { account } = getState().gameReducer;
-        const { proposal } = action;
+        const { account } = getState().gameReducer
+        const { proposal } = action
 
         if (
           proposal &&
           proposal.agreement
          ) {
-          actions.layer2Actions.updateAgreement(proposal.agreement);
+          actions.layer2Actions.updateAgreement(proposal.agreement)
           action.channelParty = proposal.agreement.partyA === account ? 'A' : 'B'
         }
 
-        return next(action);
+        return next(action)
       }
       case actionTypes.layer2.AGREEMENT_CREATED: {
-        const { account } = getState().gameReducer;
-        const { partyB, agreement, state } = action;
+        const { account } = getState().gameReducer
+        const { partyB, agreement, state } = action
 
         return db.update('game_proposals', {
           [account]: {
@@ -116,11 +116,11 @@ export default ({ dispatch, getState }) => {
             state,
             agreement
           }
-        });
+        })
       }
       case actionTypes.layer2.AGREEMENT_JOINED: {
-        const { account } = getState().gameReducer;
-        const { counterparty, agreement, state } = action;
+        const { account } = getState().gameReducer
+        const { counterparty, agreement, state } = action
 
         return db.update('game_proposals', {
           [account]: {
@@ -133,11 +133,11 @@ export default ({ dispatch, getState }) => {
             state,
             agreement
           }
-        });
+        })
       }
       case actionTypes.layer2.CHANNEL_OPENED: {
-        const { account } = getState().gameReducer;
-        const { counterparty, agreement, channel } = action;
+        const { account } = getState().gameReducer
+        const { counterparty, agreement, channel } = action
 
         return db.update('game_proposals', {
           [account]: {
@@ -150,11 +150,11 @@ export default ({ dispatch, getState }) => {
             agreement,
             channel
           }
-        });
+        })
       }
       case actionTypes.layer2.CHANNEL_JOINED: {
-        const { account } = getState().gameReducer;
-        const { counterparty, agreement, channel } = action;
+        const { account } = getState().gameReducer
+        const { counterparty, agreement, channel } = action
 
         return db.update('game_proposals', {
           [account]: {
@@ -167,63 +167,64 @@ export default ({ dispatch, getState }) => {
             agreement,
             channel
           }
-        });
+        })
       }
       case actionTypes.game.LISTEN_GAME_ON: {
-        const {
-          channelParty,
-          proposal: {
-            agreement: {
-              partyA,
-              partyB
-            }
-          },
-        } = getState().gameReducer;
+        const { account } = getState().gameReducer
 
+        // Set and listen for your own address
         return Promise.all([
-          db.set(`game_states/${partyA}${partyB}`, GAME_DATA.initialGameState),
+          db.update(`game_states/${account}`, GAME_DATA.initialGameState),
           db.listenOn(
-            `game_states/${partyA}${partyB}`,
+            `game_states/${account}`,
             actions.gameActions.handleGameState
           )
-        ]);
+        ])
       }
       case actionTypes.game.LISTEN_GAME_OFF: {
-        const {
-          proposal: {
-            agreement: {
-              partyA,
-              partyB
-            }
-          }
-        } = getState().gameReducer;
+        const { account } = getState().gameReducer
 
-        next(action);
-
-        return db.listenOff(`game_states/${partyA}${partyB}`);
+        return db.listenOff(`game_states/${account}`)
       }
       case actionTypes.game.HANDLE_GAME_STATE: {
         const {
           channelParty,
           gameState: currGameState
-        } = getState().gameReducer;
-        let { gameState: nextGameState } = action;
-        console.log('current game state', currGameState);
-        console.log('next game state', nextGameState);
+        } = getState().gameReducer
+        let { gameState: nextGameState } = action
+        console.log('current game state', currGameState)
+        console.log('next game state', nextGameState)
         // do some logic
         if (nextGameState) {
-          nextGameState.isMyTurn = nextGameState.turn === channelParty;
+          nextGameState.isMyTurn = nextGameState.turn === channelParty
         } else {
           // initialize local copy and set player turn
           nextGameState = {
             ...GAME_DATA.initialGameState,
             isMyTurn: channelParty === 'B',
-          };
+          }
         }
-        return next(action);
+        return next(action)
+      }
+      case actionTypes.game.TURN: {
+        const { channelParty, proposal, gameState } = getState().gameReducer
+        const partyKey = channelParty == 'A' ? 'B' : 'A'
+        const updateKey = proposal.agreement[`party${partyKey}`]
+
+        action.turn = partyKey;
+
+        next(action)
+
+        return db.update(`game_states/${updateKey}`, {
+          turn: partyKey,
+          [channelParty]: {
+            ...gameState[channelParty],
+            playerState: action.playerState
+          }
+        })
       }
       default:
-        return next(action);
+        return next(action)
     }
-  };
+  }
 }

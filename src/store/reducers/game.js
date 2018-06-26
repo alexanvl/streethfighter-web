@@ -8,7 +8,7 @@ const initialState = {
   channelParty: '',
   lobbyInterval: null,
   gameState: {},
-};
+}
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -66,7 +66,33 @@ export default (state = initialState, action) => {
         gameState: { }
       }
     }
+    case actionTypes.game.SET_PLAYER_STATE: {
+      return {
+        ...state,
+        gameState: {
+          ...state.gameState,
+          [state.channelParty]: {
+            ...state.gameState[state.channelParty],
+            playerState: action.playerState,
+          }
+        }
+      }
+    }
+    case actionTypes.game.TURN: {
+      return {
+        ...state,
+        gameState: {
+          ...state.gameState,
+          turn: action.turn,
+          isMyTurn: false,
+          [state.channelParty]: {
+            ...state.gameState[state.channelParty],
+            playerState: action.playerState,
+          }
+        }
+      }
+    }
     default:
-      return state;
+      return state
   }
 }

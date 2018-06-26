@@ -1,30 +1,89 @@
 
 const GAME_DATA = {
-  fighters: [
-    { name: 'Vitalik', },
-    { name: 'Satoshi', }
-  ],
+  // temp fighter data
+  // assume player A and B
+  fighters: {
+    A: {
+      id: 0,
+      name: 'Vitalik',
+      stats: {
+        punch: 30,
+        kick: 40,
+        super: 90,
+        health: 2500,
+      }
+    },
+   B: {
+      id: 1,
+      name: 'Satoshi',
+      stats: {
+        punch: 50,
+        kick: 50,
+        super: 70,
+        health: 2000,
+      }
+    }
+  },
   initialGameState: {
     turn: 'B',
     isMyTurn: false,
-    lastMove: 0,
-    lastDamage: 0,
-    lastRand: 0,
-    history: [],
-    startHealth: 2000,
+    moveHistroy: [],
+    A: {
+      random: 0,
+      damage: 0,
+      playerState: 'idle',
+      health: 0,
+    },
+    B: {
+      random: 0,
+      damage: 0,
+      playerState: 'idle',
+      health: 0,
+    }
   },
   keys: {
     punch: 80, // p
     kick: 75, // k
     super: 83 // s
   },
-  characterStates: {
-    punch: 0,
-    kick: 1,
-    idle: 2,
-    super: 3,
-  }
-};
+  playerStates: {
+    punch:{
+      characterState: 0,
+      repeat: false,
+      move: { x: 5, y: 0 },
+    },
+    kick: {
+      characterState: 1,
+      repeat: false,
+      move: { x: -5, y: 0 },
+    },
+    idle: {
+      characterState: 2,
+      repeat: true,
+      move: { x: 0, y: 0 },
+    },
+    super: {
+      characterState: 3,
+      repeat: false,
+      move: { x: 5, y: 0 },
+    },
+    block: {
+      characterState: 4,
+      repeat: false,
+      move: { x: 0, y: 0 },
+    },
+    victory: {
+      characterState: 5,
+      repeat: true,
+      move: { x: 0, y: 0 },
+    },
+    ko: {
+      characterState: 6,
+      repeat: false,
+      move: { x: 0, y: 0 },
+    }
+  },
+}
 
 const dev = {
   WEB3_URL: 'http://localhost:8545',
@@ -34,7 +93,7 @@ const dev = {
     '0x22d491bde2303f2f43325b2108d26f1eaba1e32b': '0x6370fd033278c143179d81c5526140625662b8daa446c22ee2d73db3707e620c'
   },
   GAME_DATA
-};
+}
 
 const prod = {
   WEB3_URL: 'https://rinkeby.infura.io',
@@ -44,12 +103,12 @@ const prod = {
     '0xd4EA3b21C312D7C6a1c744927a6F80Fe226A8416': '0x9eb0e84b7cadfcbbec8d49ae7112b25e0c1cb158ecd2160c301afa1f4a1029c8'
   },
   GAME_DATA
-};
+}
 
 const config = process.env.NODE_ENV === 'production'
   ? prod
-  : dev;
+  : dev
 
 export default {
   ...config
-};
+}
