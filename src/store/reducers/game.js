@@ -56,6 +56,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         gameState: {
+          ...state.gameState,
           ...action.gameState
         }
       }
@@ -88,6 +89,7 @@ export default (state = initialState, action) => {
           [state.channelParty]: {
             ...state.gameState[state.channelParty],
             playerState: action.playerState,
+            nonce: action.nonce,
           }
         }
       }

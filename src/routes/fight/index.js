@@ -37,13 +37,13 @@ class Fight extends Component {
             <Character
               fighter='A'
               isActive={channelParty === 'A'}
-              playerData={gameState.A}
+              //playerData={gameState.A}
               keys={this.keyListener}
             />
             <Character
               fighter='B'
               isActive={channelParty === 'B'}
-              playerData={gameState.B}
+              //playerData={gameState.B}
               keys={this.keyListener}
             />
           </World>

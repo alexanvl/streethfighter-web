@@ -33,12 +33,14 @@ const GAME_DATA = {
       damage: 0,
       playerState: 'idle',
       health: 0,
+      nonce: 0,
     },
     B: {
       random: 0,
       damage: 0,
       playerState: 'idle',
       health: 0,
+      nonce: 0,
     }
   },
   keys: {
@@ -48,36 +50,43 @@ const GAME_DATA = {
   },
   playerStates: {
     punch:{
+      playerState: 'punch',
       characterState: 0,
       repeat: false,
       move: { x: 5, y: 0 },
     },
     kick: {
+      playerState: 'kick',
       characterState: 1,
       repeat: false,
       move: { x: -5, y: 0 },
     },
     idle: {
+      playerState: 'idle',
       characterState: 2,
       repeat: true,
       move: { x: 0, y: 0 },
     },
     super: {
+      playerState: 'super',
       characterState: 3,
       repeat: false,
       move: { x: 5, y: 0 },
     },
     block: {
+      playerState: 'block',
       characterState: 4,
       repeat: false,
       move: { x: 0, y: 0 },
     },
     victory: {
+      playerState: 'victory',
       characterState: 5,
       repeat: true,
       move: { x: 0, y: 0 },
     },
     ko: {
+      playerState: 'ko',
       characterState: 6,
       repeat: false,
       move: { x: 0, y: 0 },

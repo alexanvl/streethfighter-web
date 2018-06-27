@@ -41,8 +41,8 @@ export function setBalance(address, balance) {
   return { type: actions.SET_BALANCE, address, balance }
 }
 
-export function listenGameOn() {
-  return { type: actions.LISTEN_GAME_ON }
+export function listenGameOn(cb) {
+  return { type: actions.LISTEN_GAME_ON, cb }
 }
 
 export function listenGameOff() {

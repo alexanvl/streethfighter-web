@@ -22,7 +22,7 @@ export default injectRedux(
 
     constructor(props) {
       super(props)
-      this.allowKeys = true
+
       this.state = {
         ...GAME_DATA.playerStates.idle,
         playerState: 'idle',
@@ -32,46 +32,33 @@ export default injectRedux(
           x: props.fighter === 'A' ? 0 : 400,
           y: 20
         },
-        settingState: false
-        //characterHealth: props.health,
       }
     }
 
-    // static getDerivedStateFromProps(nextProps, prevState) {
-    //   const { fighter, gameReducer: { gameState }, isActive } = nextProps
-
-    //   if (gameState[fighter] && !isActive) {
-    //     const playerState = gameState[fighter].playerState
-
-    //     if (prevState.playerState !== playerState && !prevState.settingState) {
-    //       return {
-    //         ...GAME_DATA.playerStates[playerState],
-    //         playerState,
-    //         settingState: true
-    //       }
-    //     } else {
-    //       return {
-    //         settingState: false
-    //       }
-    //     }
-    //   }
-
-    //   return null
-    // }
-
     componentDidMount() {
-     this.jumpNoise = new AudioPlayer('/assets/jump.wav')
+      const { isActive } = this.props
+      //this.jumpNoise = new AudioPlayer('/assets/jump.wav')
       // Start update loop
       Matter.Events.on(this.context.engine, 'afterUpdate', this.update)
       //this.props.firebaseActions.listenOn(this.props.fireChannel, this.makeMove)
-      this.props.gameActions.listenGameOn()
-      window.onbeforeunload = () => {
-        this.props.gameActions.listenGameOff()
+      if (!isActive) {
+        this.props.gameActions.listenGameOn(state => {
+          const { gameReducer: { gameState } } = this.props
+          if (this.state.playerState === 'idle') {
+           this.setState({ ...GAME_DATA.playerStates[state.playerState] })
+          }
+        })
+        window.onbeforeunload = () => {
+          this.props.gameActions.listenGameOff()
+        }
       }
     }
 
     componentWillUnmount() {
-      this.props.listenGameOff()
+      const { isActive } = this.props
+      if (!isActive) {
+        this.props.listenGameOff()
+      }
     }
 
     componentDidUpdate() {
@@ -93,14 +80,12 @@ export default injectRedux(
         spritePlaying
       } = this.state
 
-      if (isActive && gameState.isMyTurn && this.allowKeys) {
+      if (isActive && gameState.isMyTurn) {
         this.checkKeys()
       }
 
-      if (!spritePlaying) {
-        this.allowKeys = isActive
-        this.setState(GAME_DATA.playerStates.idle)
-        this.props.gameActions.setPlayerState('idle')
+      if (!spritePlaying && playerState !== 'idle') {
+        this.setState({ ...GAME_DATA.playerStates.idle })
       }
     }
 
@@ -130,12 +115,11 @@ export default injectRedux(
 
     action = (type) => {
       if (this.state.playerState !== type) {
-        this.allowKeys = false
         this.props.keys.up({
           keyCode: GAME_DATA.keys[type] ,
           preventDefault: () => {}
         })
-        this.setState(GAME_DATA.playerStates[type])
+        this.setState({ ...GAME_DATA.playerStates[type] })
         this.props.gameActions.turn(type)
       }
     }
@@ -187,8 +171,10 @@ export default injectRedux(
       })
     }
 
+
     render() {
       const { fighter } = this.props
+      const { repeat, characterState } = this.state
       const image = GAME_DATA.fighters[fighter].name
       const side = fighter === 'A' ? 'l' : 'r'
       const x = this.state.characterPosition.x
@@ -207,11 +193,11 @@ export default injectRedux(
               }}
             >
               <Sprite
-                repeat={this.state.repeat}
+                repeat={repeat}
                 onPlayStateChanged={this.handlePlayStateChanged}
                 src={"/src/images/fighter" + image+"_"+side+".png"}
                 scale={this.context.scale}
-                state={this.state.characterState}
+                state={characterState}
                 steps={[2, 2, 2, 2, 1, 2, 1]}
                 tileHeight={600}
                 tileWidth={600}

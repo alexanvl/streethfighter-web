@@ -171,17 +171,29 @@ export default ({ dispatch, getState }) => {
       }
       case actionTypes.game.LISTEN_GAME_ON: {
         const {
+          channelParty,
           proposal: {
             agreement: { partyA, partyB }
           }
         } = getState().gameReducer
+        const { cb } = action
 
-        // Set and listen for your own address
         return Promise.all([
           db.update(`game_states/${partyA}${partyB}`, GAME_DATA.initialGameState),
           db.listenOn(
             `game_states/${partyA}${partyB}`,
-            actions.gameActions.handleGameState
+            state => {
+              const { gameState } = getState().gameReducer
+              const counterParty = channelParty === 'A' ? 'B' : 'A'
+              const currNonce = state[counterParty].nonce
+              const prevNonce = gameState[counterParty] && gameState[counterParty].nonce
+
+              if (currNonce > prevNonce) {
+                cb(state[counterParty])
+              }
+
+              actions.gameActions.handleGameState(state)
+            }
           )
         ])
       }
@@ -220,17 +232,20 @@ export default ({ dispatch, getState }) => {
           channelParty,
           proposal: {
             agreement: { partyA, partyB }
-          }
+          },
+          gameState,
         } = getState().gameReducer
         const partyKey = channelParty == 'A' ? 'B' : 'A'
 
         action.turn = partyKey;
+        action.nonce = gameState[channelParty].nonce + 1
 
         next(action)
 
         const updates = {
           turn: partyKey,
           [`${channelParty}/playerState`]: action.playerState,
+          [`${channelParty}/nonce`]: action.nonce
         }
 
         return db.update(`game_states/${partyA}${partyB}`, updates)
