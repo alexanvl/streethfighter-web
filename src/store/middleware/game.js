@@ -170,21 +170,29 @@ export default ({ dispatch, getState }) => {
         })
       }
       case actionTypes.game.LISTEN_GAME_ON: {
-        const { account } = getState().gameReducer
+        const {
+          proposal: {
+            agreement: { partyA, partyB }
+          }
+        } = getState().gameReducer
 
         // Set and listen for your own address
         return Promise.all([
-          db.update(`game_states/${account}`, GAME_DATA.initialGameState),
+          db.update(`game_states/${partyA}${partyB}`, GAME_DATA.initialGameState),
           db.listenOn(
-            `game_states/${account}`,
+            `game_states/${partyA}${partyB}`,
             actions.gameActions.handleGameState
           )
         ])
       }
       case actionTypes.game.LISTEN_GAME_OFF: {
-        const { account } = getState().gameReducer
+        const {
+          proposal: {
+            agreement: { partyA, partyB }
+          }
+        } = getState().gameReducer
 
-        return db.listenOff(`game_states/${account}`)
+        return db.listenOff(`game_states/${partyA}${partyB}`)
       }
       case actionTypes.game.HANDLE_GAME_STATE: {
         const {
@@ -204,12 +212,17 @@ export default ({ dispatch, getState }) => {
             isMyTurn: channelParty === 'B',
           }
         }
+
         return next(action)
       }
       case actionTypes.game.TURN: {
-        const { channelParty, proposal, gameState } = getState().gameReducer
+        const {
+          channelParty,
+          proposal: {
+            agreement: { partyA, partyB }
+          }
+        } = getState().gameReducer
         const partyKey = channelParty == 'A' ? 'B' : 'A'
-        const updateKey = proposal.agreement[`party${partyKey}`]
 
         action.turn = partyKey;
 
@@ -220,7 +233,7 @@ export default ({ dispatch, getState }) => {
           [`${channelParty}/playerState`]: action.playerState,
         }
 
-        return db.update(`game_states/${updateKey}`, updates)
+        return db.update(`game_states/${partyA}${partyB}`, updates)
       }
       default:
         return next(action)
