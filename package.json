@@ -6,7 +6,7 @@
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "firebase": "^5.0.4",
-    "js-layer2lib": "github:layer2lib/js-layer2lib#master",
+    "js-layer2lib": "github:layer2lib/js-layer2lib#streethfighter",
     "matter-js": "^0.14.2",
     "moment": "^2.22.2",
     "prop-types": "^15.6.1",
